@@ -58,15 +58,15 @@ def copy_notebook_to_folder(notebook_stem, origin_folder, destination_folder):
     return command
 
 
-def task_pull_fred():
-    """ """
-    file_dep = ["./src/load_fred.py"]
-    file_output = ["fred.parquet"]
-    targets = [DATA_DIR / "pulled" / file for file in file_output]
+def task_load_commodities_data():
+    """Task to load commodities data"""
+    file_dep = ["./src/load_commodities_data.py"]
+    file_output = ["commodities_data.csv"]
+    targets = [DATA_DIR / "manual" / file for file in file_output]
 
     return {
         "actions": [
-            "ipython ./src/load_fred.py",
+            "ipython ./src/load_commodities_data.py"
         ],
         "targets": targets,
         "file_dep": file_dep,
