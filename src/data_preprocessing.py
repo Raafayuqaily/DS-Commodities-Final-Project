@@ -25,6 +25,9 @@ def preprocess_data(df):
     df_prep.sort_values(by=['Date','Commodity'], inplace = True)
     df_prep.set_index('Date', inplace = True)
 
+    commodities_to_drop = ['Barley', 'Coal', 'Propane', 'Broilers', 'Butter']
+    df_prep = df_prep[~df_prep['Commodity'].isin(commodities_to_drop)]
+    
     return df_prep
 
 # if __name__ == '_main_':
