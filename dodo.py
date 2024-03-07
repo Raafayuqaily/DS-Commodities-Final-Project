@@ -66,7 +66,10 @@ def task_load_commodities_data():
 
     return {
         "actions": [
-            "ipython ./src/load_commodities_data.py"
+            (load_commodities_data.load_data, [], {
+                "data_dir": DATA_DIR,
+                "file_name": "commodities_data.csv"
+            }),
         ],
         "targets": targets,
         "file_dep": file_dep,
