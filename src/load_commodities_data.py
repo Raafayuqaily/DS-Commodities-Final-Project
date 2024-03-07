@@ -12,7 +12,6 @@ def load_data(data_dir=DATA_DIR, file_name = "commodities_data.csv"):
     """
     file_path = Path(data_dir) / "manual" / file_name
     df = pd.read_csv(file_path)
-    df.set_index('Date', inplace=True)
     return df
 
 def demo():
