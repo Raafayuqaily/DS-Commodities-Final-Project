@@ -87,35 +87,62 @@ def get_first_last_to_expire_contract(prep_df, first_to_exp_ind = 1, last_to_exp
 
     # #Getting Close Prices for Last to Expire Contract per Commodity
     cmdty_cntrct_last_to_expire_df = cmdty_entire_df[cmdty_entire_df['Contract'] > first_to_exp_ind]
-    max_date_cntrc_last_exp_df = cmdty_cntrct_last_to_expire_df.groupby(['Commodity', 'YearMonth']).agg(Max_Date=('Date', 'max'),
+    max_date_cntrct_last_exp_df = cmdty_cntrct_last_to_expire_df.groupby(['Commodity', 'YearMonth']).agg(Max_Date=('Date', 'max'),
                                                                                          Max_Contract_Number=('Contract', 'max')).reset_index()
-    print(max_date_cntrc_last_exp_df)
+    cmdty_entire_df_temp = cmdty_entire_df
+    cmdty_entire_df_temp['uid'] = cmdty_entire_df_temp['Commodity']+str(cmdty_entire_df_temp['Date']) + str(cmdty_entire_df_temp['Contract'])
+    cmdty_entire_df_temp
+
+    return cmdty_entire_df_temp
     # if last_to_expire == False:
     #     return max_date_price_first_exp
     # else:
     #     return max_date_cntrc_last_exp_df
 
-def compute_basis(prep_df, first_to_exp_ind = 1, last_to_expire = False):
+def compute_basis(prep_df):
     pass
+    # Assuming that 'Date' is the index, convert it to a column first if needed
+#     if 'Date' not in prep_df.columns:
+#         data = prep_df.reset_index()
+#     else:
+#         data = prep_df
 
-    # first_to_expire_df = get_first_last_to_expire_contract(prep_df, first_to_exp_ind, last_to_expire = last_to_expire)
-    # last_to_expire_df = get_first_last_to_expire_contract(prep_df, first_to_exp_ind, last_to_expire = True)
+#     filtered_groups = data.groupby(['Commodity', 'YearMonth']).filter(lambda x: x['Contract'].nunique() >= 2)
 
-    # first_to_expire_df.reset_index(inplace = True)
-    # last_to_expire_df.reset_index(inplace = True)
+#     def extract_details(group):
+#         # Since 'Date' is an index, we use group.index to access it
+#         last_date = group['Date'].max()
+#         group_on_last_date = group.loc[group.index == last_date]
+#         min_contract = group_on_last_date['Contract'].min()
+#         max_contract = group_on_last_date['Contract'].max()
+#         min_price = group_on_last_date.loc[group_on_last_date['Contract'] == min_contract, 'ClosePrice'].iloc[0]
+#         max_price = group_on_last_date.loc[group_on_last_date['Contract'] == max_contract, 'ClosePrice'].iloc[0]
+#         return pd.Series({
+#             'date': last_date,
+#             'min_contract': min_contract,
+#             'max_contract': max_contract,
+#             'min_contract_price': min_price,
+#             'max_contract_price': max_price
+#         })
 
-    # cmdty_exp_df = pd.merge(first_to_expire_df, last_to_expire_df, how='left', left_on=['Commodity', 'YearMonth'], right_on=['Commodity', 'YearMonth'])
-    # cmdty_exp_df = cmdty_exp_df.rename(columns={'Date_x':'Date',
-    #                                             'ClosePrice_x':'ClosePriceFrstExp',
-    #                                             'ClosePrice_y':'ClosePriceLastExp',
-    #                                             'Contract_x':'FirstToExp',
-    #                                             'Contract_y':'LastToExp'})
-    # cmdty_exp_df.drop(columns=['Date_y'], inplace = True)
-    # cmdty_exp_df['LogFrstToExp'] = np.log(cmdty_exp_df['ClosePriceFrstExp'])
-    # cmdty_exp_df['LogLastToExp'] = np.log(cmdty_exp_df['ClosePriceLastExp'])
+#     # Apply details extraction for each commodity-month group
+#     result = filtered_groups.groupby(['Commodity', 'YearMonth']).apply(extract_details).reset_index()
+
+#     # Ensure no zero or negative prices
+#     result = result[(result['min_contract_price'] > 0) & (result['max_contract_price'] > 0)]
     
+#     # Compute the basis for each row
+#     result['basis'] = (np.log(result['min_contract_price']) - np.log(result['max_contract_price'])) / (result['max_contract'] - result['min_contract'])
+#     result.replace([np.inf, -np.inf], np.nan, inplace=True) # Handle division by zero
 
-    # return cmdty_exp_df
+#     # Compute average basis for each commodity
+#     final_df = result.groupby('Commodity')['basis'].mean().reset_index()
+#     final_df.rename(columns={'basis': 'Avg_Basis'}, inplace=True)
+    
+#     return result
+#   # Return the final DataFrame containing average basis for each commodity
+
+
 
 def compute_freq_backwardation(computed_basis):
     pass
@@ -128,5 +155,6 @@ returns_df = compute_commodity_excess_returns(pre_processed_df)
 perf_metrics = compute_performance_metrics(returns_df)
 #basis = compute_basis(pre_processed_df)
 ts = get_first_last_to_expire_contract(pre_processed_df, 1, last_to_expire = True)
+#bob = compute_basis(pre_processed_df)
 print(ts)
 
