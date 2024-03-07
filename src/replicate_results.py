@@ -63,50 +63,59 @@ def compute_performance_metrics(excess_returns_df, annualizing_period = 12):
     return performance_metrics
 
 def get_first_last_to_expire_contract(prep_df, first_to_exp_ind = 1, last_to_expire = False):
-
-    cmdty_entire_df = prep_df.reset_index()
     
+    cmdty_df = prep_df
+    
+    #Get Commodities which have more than 1 contracts against the same date
+    cmdtry_cntrct_count = cmdty_df.groupby(['Commodity', 'Date'])['Contract'].nunique().reset_index(name='Distinct_Contracts')
+    cmdtry_cntrct_atlst_2 = cmdtry_cntrct_count[cmdtry_cntrct_count['Distinct_Contracts'] > 1]
+    
+    #Get list of the commodities for the aforementioned criterion
+    list_of_commodities = cmdtry_cntrct_atlst_2['Commodity'].unique()
+    
+    #Filter the data to only get the subset of interest
+    cmdty_entire_df = cmdty_df[cmdty_df['Commodity'].isin(list_of_commodities)]
+    cmdty_entire_df.reset_index(inplace = True)
+
     #Getting Close Prices for 1st to Expire Contract Per Commodity
     cmdty_cntrct_first_to_expire_df = cmdty_entire_df[cmdty_entire_df['Contract'] == first_to_exp_ind]
     max_date_price_first_exp = cmdty_cntrct_first_to_expire_df.groupby(['Commodity', 'YearMonth']).apply(
-                                lambda x: x.loc[x['Date'].idxmax(), ['Date', 'ClosePrice']]).reset_index()
-    max_date_price_first_exp['Contract'] = first_to_exp_ind
+                                lambda x: x.loc[x['Date'].idxmax(), ['Date', 'Contract', 'ClosePrice']]).reset_index()
+    #max_date_price_first_exp['Contract'] = first_to_exp_ind
     max_date_price_first_exp.sort_values(by=['Commodity','YearMonth'], inplace =True)
     max_date_price_first_exp.set_index('Date', inplace=True)
 
-    #Getting Close Prices for Last to Expire Contract per Commodity
+    # #Getting Close Prices for Last to Expire Contract per Commodity
     cmdty_cntrct_last_to_expire_df = cmdty_entire_df[cmdty_entire_df['Contract'] > first_to_exp_ind]
-    max_price_last_exp = cmdty_cntrct_last_to_expire_df.groupby(['Commodity', 'YearMonth']).apply(
-                    lambda x: x.loc[x['Date'].idxmax()]).reset_index(drop=True)
-    max_price_last_exp.sort_values(by=['Commodity', 'YearMonth'], inplace=True)
-    print(max_price_last_exp)
-    #max_price_last_exp.set_index('Date', inplace=True)
-
-    if last_to_expire == False:
-        return max_date_price_first_exp
-    else:
-        return max_price_last_exp
+    max_date_cntrc_last_exp_df = cmdty_cntrct_last_to_expire_df.groupby(['Commodity', 'YearMonth']).agg(Max_Date=('Date', 'max'),
+                                                                                         Max_Contract_Number=('Contract', 'max')
+    print(max_date_cntrc_last_exp_df)
+    # if last_to_expire == False:
+    #     return max_date_price_first_exp
+    # else:
+    #     return max_date_cntrc_last_exp_df
 
 def compute_basis(prep_df, first_to_exp_ind = 1, last_to_expire = False):
+    pass
 
-    first_to_expire_df = get_first_last_to_expire_contract(prep_df, first_to_exp_ind, last_to_expire = last_to_expire)
-    last_to_expire_df = get_first_last_to_expire_contract(prep_df, first_to_exp_ind, last_to_expire = True)
+    # first_to_expire_df = get_first_last_to_expire_contract(prep_df, first_to_exp_ind, last_to_expire = last_to_expire)
+    # last_to_expire_df = get_first_last_to_expire_contract(prep_df, first_to_exp_ind, last_to_expire = True)
 
-    first_to_expire_df.reset_index(inplace = True)
-    last_to_expire_df.reset_index(inplace = True)
+    # first_to_expire_df.reset_index(inplace = True)
+    # last_to_expire_df.reset_index(inplace = True)
 
-    cmdty_exp_df = pd.merge(first_to_expire_df, last_to_expire_df, how='left', left_on=['Commodity', 'YearMonth'], right_on=['Commodity', 'YearMonth'])
-    cmdty_exp_df = cmdty_exp_df.rename(columns={'Date_x':'Date',
-                                                'ClosePrice_x':'ClosePriceFrstExp',
-                                                'ClosePrice_y':'ClosePriceLastExp',
-                                                'Contract_x':'FirstToExp',
-                                                'Contract_y':'LastToExp'})
-    cmdty_exp_df.drop(columns=['Date_y'], inplace = True)
-    cmdty_exp_df['LogFrstToExp'] = np.log(cmdty_exp_df['ClosePriceFrstExp'])
-    cmdty_exp_df['LogLastToExp'] = np.log(cmdty_exp_df['ClosePriceLastExp'])
+    # cmdty_exp_df = pd.merge(first_to_expire_df, last_to_expire_df, how='left', left_on=['Commodity', 'YearMonth'], right_on=['Commodity', 'YearMonth'])
+    # cmdty_exp_df = cmdty_exp_df.rename(columns={'Date_x':'Date',
+    #                                             'ClosePrice_x':'ClosePriceFrstExp',
+    #                                             'ClosePrice_y':'ClosePriceLastExp',
+    #                                             'Contract_x':'FirstToExp',
+    #                                             'Contract_y':'LastToExp'})
+    # cmdty_exp_df.drop(columns=['Date_y'], inplace = True)
+    # cmdty_exp_df['LogFrstToExp'] = np.log(cmdty_exp_df['ClosePriceFrstExp'])
+    # cmdty_exp_df['LogLastToExp'] = np.log(cmdty_exp_df['ClosePriceLastExp'])
     
 
-    return cmdty_exp_df
+    # return cmdty_exp_df
 
 def compute_freq_backwardation(computed_basis):
     pass
@@ -119,4 +128,5 @@ returns_df = compute_commodity_excess_returns(pre_processed_df)
 perf_metrics = compute_performance_metrics(returns_df)
 #basis = compute_basis(pre_processed_df)
 ts = get_first_last_to_expire_contract(pre_processed_df, 1, last_to_expire = True)
-print((ts.loc[ts['Commodity'] == 'Aluminium', 'Contract']))
+print(ts)
+
