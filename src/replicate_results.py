@@ -88,7 +88,7 @@ def get_first_last_to_expire_contract(prep_df, first_to_exp_ind = 1, last_to_exp
     # #Getting Close Prices for Last to Expire Contract per Commodity
     cmdty_cntrct_last_to_expire_df = cmdty_entire_df[cmdty_entire_df['Contract'] > first_to_exp_ind]
     max_date_cntrc_last_exp_df = cmdty_cntrct_last_to_expire_df.groupby(['Commodity', 'YearMonth']).agg(Max_Date=('Date', 'max'),
-                                                                                         Max_Contract_Number=('Contract', 'max')
+                                                                                         Max_Contract_Number=('Contract', 'max')).reset_index()
     print(max_date_cntrc_last_exp_df)
     # if last_to_expire == False:
     #     return max_date_price_first_exp
