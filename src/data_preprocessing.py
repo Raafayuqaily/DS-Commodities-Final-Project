@@ -31,6 +31,7 @@ def preprocess_data(df):
     # DATA_DIR = Path(config.DATA_DIR)
     # df = load_commodities_data.load_data(data_dir=DATA_DIR, file_name = "commodities_data.csv")
     # d = preprocess_data(df)
+    # print(d)
 
 
 
