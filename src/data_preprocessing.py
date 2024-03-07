@@ -6,10 +6,6 @@ import config
 from pathlib import Path
 import pandas as pd
 
-DATA_DIR = Path(config.DATA_DIR)
-
-df = load_commodities_data.load_data(data_dir=DATA_DIR, file_name = "commodities_data.csv")
-
 def preprocess_data(df):
     """
     Rename the price column to 'Close_Price'
@@ -31,8 +27,10 @@ def preprocess_data(df):
 
     return df_prep
 
-if __name__ == '_main_':
-    preprocess_data(df)
+# if __name__ == '_main_':
+    # DATA_DIR = Path(config.DATA_DIR)
+    # df = load_commodities_data.load_data(data_dir=DATA_DIR, file_name = "commodities_data.csv")
+    # d = preprocess_data(df)
 
 
 
