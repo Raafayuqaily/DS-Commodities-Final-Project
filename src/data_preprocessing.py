@@ -12,16 +12,16 @@ df = load_commodities_data.load_data(data_dir=DATA_DIR, file_name = "commodities
 
 def preprocess_data(df):
     """
-    Rename the price column to 'Close_Price'
+    Rename the price column to 'ClosePrice'
     Ensure Data types are as expected. For example, 'Date' must be a datetime object
     Sort Data
     """
     df_prep = df
-    df_prep = df_prep.rename(columns = {'PX_LAST':'Close_Price'})
+    df_prep = df_prep.rename(columns = {'PX_LAST':'ClosePrice'})
     
     df_prep['Date'] = pd.to_datetime(df_prep['Date'])
     df_prep['Contract'] = df_prep['Contract'].astype(int)
-    df_prep['Close_Price'] = df_prep['Close_Price'].astype(float)
+    df_prep['ClosePrice'] = df_prep['ClosePrice'].astype(float)
 
     #Creating a column for YearMonth, which makes analysis easier
     df_prep['YearMonth'] = df_prep['Date'].dt.to_period('M')
