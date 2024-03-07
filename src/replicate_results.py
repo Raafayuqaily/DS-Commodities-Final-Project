@@ -131,7 +131,6 @@ def compute_basis_mean(timeseries_basis):
     return mean_basis
 
 def compute_freq_backwardation(timeseries_basis):
-    #timeseries_basis
     pass
 
 # if __name__ == '_main_':
