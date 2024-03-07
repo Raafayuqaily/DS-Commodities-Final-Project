@@ -1,9 +1,33 @@
-Project Title HERE
+Investment shocks and the commodity basis spread
+(Yang F.)
 ==================
 
 # About this project
+The main goal of this project is to build an automated engine that reproduces the analytical findings in Table 1 of the study, Investment shocks and the commodity basis spread by Fan Yang. Our team has put has not only replicated the finding for the time period `start_date` and `end_date` but also has produced the same findings uptil `month_day_2024`.
 
-Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+## Data Gathering Approach
+While gathering data for the project, we ran into several challenges and made certain assumptions to make progress. Those challenges and assumptions can be found in the `docs` folder. Please note that we have used Bloomberg as the source to pull the data.
+
+## Metrics Computed
+As given in Table 1 of the study, we have calculated the following metrics for the data
+1. $N$, 
+    - The number of Monthly Observations available for a commodity 
+2. Annualized Historical Excess Returns, 
+3. Annualized Historical Volatility
+4. Annaulized Sharpe Ratio
+5. Basis
+6. Frequence of Backwardation
+    - A commodity is said to be in backwardation if its basis is positive.
+
+## Metric Formulae
+
+Monthly Excess Returns
+$$R^{e}_{i,t+1,T} = \frac{F_{i,t+1,T}}{F_{i,t,T}} - 1$$
+
+Where $F_{i,t,T}$ respresents the Futures Prices for Commodity $i$, at time $t$, with Maturity date $T$.
+
+Basis
+
 
 # Quick Start
 
