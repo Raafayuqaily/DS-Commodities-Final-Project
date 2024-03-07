@@ -22,7 +22,7 @@ def test_preprocess_data_sorting():
     
     df = load_commodities_data.load_data(data_dir=DATA_DIR, file_name="commodities_data.csv")
     processed_data = data_preprocessing.preprocess_data(df)
-    
+
     # Test that the data is sorted correctly after preprocessing
     assert (processed_data.index == processed_data.index.sort_values()).all()
 
