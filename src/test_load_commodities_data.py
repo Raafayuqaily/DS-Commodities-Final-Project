@@ -1,10 +1,11 @@
 import pandas as pd
 import pytest
+import config
 from pathlib import Path
 
 import load_commodities_data
 
-DATA_DIR = Path("Data/Manual")
+DATA_DIR = Path(config.DATA_DIR)
 
 
 def test_load_commodities_data_functionality():
