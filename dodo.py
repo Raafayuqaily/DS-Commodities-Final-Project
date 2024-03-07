@@ -11,6 +11,9 @@ from pathlib import Path
 from doit.tools import run_once
 import platform
 
+import load_commodities_data
+import data_preprocessing
+
 OUTPUT_DIR = Path(config.OUTPUT_DIR)
 DATA_DIR = Path(config.DATA_DIR)
 
@@ -75,6 +78,24 @@ def task_load_commodities_data():
         "file_dep": file_dep,
         "clean": True,
     }
+
+def task_data_preprocessing():
+    """Task to preprocess data"""
+    file_dep = ["./src/data_preprocessing.py", "./src/load_commodities_data.py"]
+    file_output = ["preprocessed_data.csv"]
+    targets = [DATA_DIR / "processed" / file for file in file_output]
+
+    return {
+        "actions": [
+            (data_preprocessing.preprocess_data, [], {
+                "df": load_commodities_data.load_data(data_dir=DATA_DIR, file_name="commodities_data.csv")
+            }),
+        ],
+        "targets": targets,
+        "file_dep": file_dep,
+        "clean": True,
+    }
+
 
 
 # def task_pull_data_via_presto():
