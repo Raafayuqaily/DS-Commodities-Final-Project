@@ -31,12 +31,11 @@ def preprocess_data(df):
 
     return df_prep
 
-# if __name__ == '_main_':
-    # DATA_DIR = Path(config.DATA_DIR)
-    # OUTPUT_DIR = Path(config.OUTPUT_DIR)
-    # df = load_commodities_data.load_data(data_dir=DATA_DIR, file_name = "commodities_data_2024.csv")
-    # d = preprocess_data(df)
-    # d.to_csv("data/pre_processcommodities_data.csv")
+if __name__ == '_main_':
+    DATA_DIR = Path(config.DATA_DIR)
+    OUTPUT_DIR = Path(config.OUTPUT_DIR)
+    df = load_commodities_data.load_data(data_dir=DATA_DIR, file_name = "commodities_data_2024.csv")
+    print(df)
 
 
 

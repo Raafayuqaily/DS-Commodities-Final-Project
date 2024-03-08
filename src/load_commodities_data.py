@@ -24,8 +24,8 @@ def demo():
     df = load_data(DATA_DIR, file_name = file_)
     print(df.head())
 
-# if __name__ == "_main_":
-# demo()
+if __name__ == "_main_":
+    demo()
 
 
 

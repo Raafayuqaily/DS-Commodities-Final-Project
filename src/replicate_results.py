@@ -168,16 +168,16 @@ def combine_metrics(prep_df):
 
     return metrics_df
 
-# if __name__ == '_main_':
-DATA_DIR = Path(config.DATA_DIR)
-file_ = config.FILENAME
-df = load_commodities_data.load_data(data_dir=DATA_DIR, file_name = file_)
-pre_processed_df = data_preprocessing.preprocess_data(df)
-returns_df = compute_commodity_excess_returns(pre_processed_df)
-perf_metrics = compute_performance_metrics(returns_df)
-first_last_to_expire = get_first_last_to_expire_contract(pre_processed_df)
-basis_ts = compute_basis_timeseries(pre_processed_df)
-basis_avg = compute_basis_mean(pre_processed_df)
-back_freq = compute_freq_backwardation(pre_processed_df)
-test_all = combine_metrics(pre_processed_df)
-print(test_all)
+if __name__ == '_main_':
+    DATA_DIR = Path(config.DATA_DIR)
+    file_ = config.FILENAME
+    df = load_commodities_data.load_data(data_dir=DATA_DIR, file_name = file_)
+    pre_processed_df = data_preprocessing.preprocess_data(df)
+    returns_df = compute_commodity_excess_returns(pre_processed_df)
+    perf_metrics = compute_performance_metrics(returns_df)
+    first_last_to_expire = get_first_last_to_expire_contract(pre_processed_df)
+    basis_ts = compute_basis_timeseries(pre_processed_df)
+    basis_avg = compute_basis_mean(pre_processed_df)
+    back_freq = compute_freq_backwardation(pre_processed_df)
+    test_all = combine_metrics(pre_processed_df)
+    print(test_all)
