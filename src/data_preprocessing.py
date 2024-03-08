@@ -13,6 +13,7 @@ def preprocess_data(df):
     Sort Data
     """
     df_prep = df
+
     df_prep = df_prep.rename(columns = {'PX_LAST':'ClosePrice'})
     
     df_prep['Date'] = pd.to_datetime(df_prep['Date'])
@@ -27,13 +28,13 @@ def preprocess_data(df):
 
     commodities_to_drop = ['Barley', 'Coal', 'Propane', 'Broilers', 'Butter']
     df_prep = df_prep[~df_prep['Commodity'].isin(commodities_to_drop)]
-    
+
     return df_prep
 
 # if __name__ == '_main_':
     # DATA_DIR = Path(config.DATA_DIR)
     # OUTPUT_DIR = Path(config.OUTPUT_DIR)
-    # df = load_commodities_data.load_data(data_dir=DATA_DIR, file_name = "commodities_data.csv")
+    # df = load_commodities_data.load_data(data_dir=DATA_DIR, file_name = "commodities_data_2024.csv")
     # d = preprocess_data(df)
     # d.to_csv("data/pre_processcommodities_data.csv")
 
