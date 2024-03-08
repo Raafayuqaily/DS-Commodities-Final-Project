@@ -27,6 +27,12 @@ DATA_DIR = (BASE_DIR / config('DATA_DIR', default=Path('data'), cast=Path)).reso
 OUTPUT_DIR = (BASE_DIR / config('OUTPUT_DIR', default=Path('output'), cast=Path)).resolve()
 FILENAME = 'commodities_data_2024.csv'
 
+STARTDATE_OLD = '1970-01-01'
+ENDDATE_OLD = '2008-12-31'
+
+STARTDATE_NEW = '2009-01-01'
+ENDDATE_NEW = '2024-12-31'
+
 if __name__ == "__main__":
     
     ## If they don't exist, create the data and output directories
