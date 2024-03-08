@@ -5,12 +5,13 @@ from pathlib import Path
 
 import load_commodities_data
 import data_preprocessing
+import replicate_results
 
 DATA_DIR = Path(config.DATA_DIR)
 
 def test_preprocess_data_types():
     
-    df = load_commodities_data.load_data(data_dir=DATA_DIR, file_name="commodities_data.csv")
+    df = load_commodities_data.load_data(data_dir=DATA_DIR, file_name="commodities_data_2024.csv")
     processed_data = data_preprocessing.preprocess_data(df)
 
     # Test that data types are as expected after preprocessing
@@ -20,7 +21,7 @@ def test_preprocess_data_types():
 
 def test_preprocess_data_sorting():
     
-    df = load_commodities_data.load_data(data_dir=DATA_DIR, file_name="commodities_data.csv")
+    df = load_commodities_data.load_data(data_dir=DATA_DIR, file_name="commodities_data_2024.csv")
     processed_data = data_preprocessing.preprocess_data(df)
 
     # Test that the data is sorted correctly after preprocessing
@@ -28,7 +29,7 @@ def test_preprocess_data_sorting():
 
 def test_preprocess_data_column_names():
     
-    df = load_commodities_data.load_data(data_dir=DATA_DIR, file_name="commodities_data.csv")
+    df = load_commodities_data.load_data(data_dir=DATA_DIR, file_name="commodities_data_2024.csv")
     processed_data = data_preprocessing.preprocess_data(df)
 
     # Test that column names are as expected after preprocessing

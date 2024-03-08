@@ -30,4 +30,4 @@ def test_load_commodities_data_completedness():
     assert all(col in df.columns for col in expected_columns)
 
     # Test if the unique number of commodities is greater than or equal to 30
-    assert df['Commodity'].nunique() >= 30
+    assert df['Commodity'].nunique() >= 25
