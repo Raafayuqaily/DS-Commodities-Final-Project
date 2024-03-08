@@ -164,11 +164,11 @@ def combine_metrics(prep_df):
                                 'Canola': 'Agriculture','Crude Oil': 'Energy','Heating Oil': 'Energy','Lean hogs': 'Livestock',
                                 'Palladium': 'Metals','Platinum': 'Metals','Lumber': 'Agriculture','Unleaded gas': 'Energy',
                                 'Copper': 'Metals','Rough rice': 'Agriculture','Natural gas': 'Energy','Aluminium': 'Metals','Gasoline': 'Energy'}
-    commodity_symbol_mapping = {'Barley': 'WA','Butter': 'O2','Canola': 'WC','Cocoa': 'CC','Coffee': 'KC','Corn': 'C-',
+    commodity_symbol_mapping = {'Canola': 'WC','Cocoa': 'CC','Coffee': 'KC','Corn': 'C-',
                                 'Cotton': 'CT','Lumber': 'LB','Oats': 'O-','Orange juice': 'JO','Rough rice': 'RR','Soybean meal': 'SM',
                                 'Soybeans': 'S-','Wheat': 'W-','Crude Oil': 'CL','Gasoline': 'RB','Heating Oil': 'HO','Natural gas': 'NG',
-                                'Propane': 'PN','Unleaded gas': 'HU','Broilers': 'BR','Feeder cattle': 'FC','Lean hogs': 'LH','Live cattle': 'LC',
-                                'Aluminium': 'AL','Coal': 'QL','Copper': 'HG','Gold': 'GC','Palladium': 'PA','Platinum': 'PL','Silver': 'SI'}
+                                'Unleaded gas': 'HU','Feeder cattle': 'FC','Lean hogs': 'LH','Live cattle': 'LC',
+                                'Aluminium': 'AL','Copper': 'HG','Gold': 'GC','Palladium': 'PA','Platinum': 'PL','Silver': 'SI'}
     
     metrics_df['Sector'] = metrics_df['Commodity'].map(commodity_sector_mapping)
     metrics_df['Symbol'] = metrics_df['Commodity'].map(commodity_symbol_mapping)
