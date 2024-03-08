@@ -97,14 +97,13 @@ def get_first_last_to_expire_contract(prep_df, first_to_exp_ind = 1, last_to_exp
     max_date_cntrct_last_exp_price_df.drop(columns = ['uid'], inplace=True)
     max_date_cntrct_last_exp_price_df.reset_index()
 
-    #print(len(max_date_price_first_exp), len(max_date_cntrct_last_exp_price_df))
-
     if last_to_expire == False:
         return max_date_price_first_exp
     else:
         return max_date_cntrct_last_exp_price_df
 
 def compute_basis_timeseries(prep_df):
+    prep_df = prep_df
     first_to_expire = get_first_last_to_expire_contract(prep_df, 1, False)
     first_to_expire['uid'] = first_to_expire['Commodity'] + first_to_expire['Date'].astype(str)
 
@@ -124,11 +123,13 @@ def compute_basis_timeseries(prep_df):
     return basis_df_base
 
 def compute_basis_mean(prep_df):
+    prep_df = prep_df
     timeseries_basis = compute_basis_timeseries(prep_df)
     mean_basis = timeseries_basis.groupby(['Commodity'])['Basis'].mean()
     return mean_basis
 
 def compute_freq_backwardation(prep_df):
+    prep_df=prep_df
     timeseries_basis = compute_basis_timeseries(prep_df)
     timeseries_basis['in_backwardation'] = timeseries_basis['Basis'].apply(lambda x: 1 if x > 0 else 0)
     
@@ -140,12 +141,13 @@ def compute_freq_backwardation(prep_df):
     poistive_basis.rename(columns = {'in_backwardation':'PositiveBasisCount'}, inplace=True)
     
     backwardation_calc_df = pd.merge(total_basis_count, poistive_basis, how='left', left_on='Commodity',right_on='Commodity')
-    backwardation_calc_df['FreqBackwardation'] = (backwardation_calc_df['PositiveBasisCount'] / backwardation_calc_df['TotalBasisCount']) * 100
+    backwardation_calc_df['Freq. of Backwardation'] = (backwardation_calc_df['PositiveBasisCount'] / backwardation_calc_df['TotalBasisCount']) * 100
     backwardation_calc_df.set_index('Commodity', inplace = True)
 
     return backwardation_calc_df
 
 def combine_metrics(prep_df):
+    prep_df = prep_df
     N = compute_num_observations(prep_df)
     returns_df = compute_commodity_excess_returns(prep_df)
     performance_metrics = compute_performance_metrics(returns_df)
@@ -162,11 +164,19 @@ def combine_metrics(prep_df):
                                 'Canola': 'Agriculture','Crude Oil': 'Energy','Heating Oil': 'Energy','Lean hogs': 'Livestock',
                                 'Palladium': 'Metals','Platinum': 'Metals','Lumber': 'Agriculture','Unleaded gas': 'Energy',
                                 'Copper': 'Metals','Rough rice': 'Agriculture','Natural gas': 'Energy','Aluminium': 'Metals','Gasoline': 'Energy'}
+    commodity_symbol_mapping = {'Barley': 'WA','Butter': 'O2','Canola': 'WC','Cocoa': 'CC','Coffee': 'KC','Corn': 'C-',
+                                'Cotton': 'CT','Lumber': 'LB','Oats': 'O-','Orange juice': 'JO','Rough rice': 'RR','Soybean meal': 'SM',
+                                'Soybeans': 'S-','Wheat': 'W-','Crude Oil': 'CL','Gasoline': 'RB','Heating Oil': 'HO','Natural gas': 'NG',
+                                'Propane': 'PN','Unleaded gas': 'HU','Broilers': 'BR','Feeder cattle': 'FC','Lean hogs': 'LH','Live cattle': 'LC',
+                                'Aluminium': 'AL','Coal': 'QL','Copper': 'HG','Gold': 'GC','Palladium': 'PA','Platinum': 'PL','Silver': 'SI'}
     
     metrics_df['Sector'] = metrics_df['Commodity'].map(commodity_sector_mapping)
-    metrics_df.set_index(['Sector','Commodity'], inplace = True)
-
-    return metrics_df
+    metrics_df['Symbol'] = metrics_df['Commodity'].map(commodity_symbol_mapping)
+    metrics_df_final = metrics_df[['Sector','Commodity','Symbol','N','Basis','Freq. of Backwardation','Ann. Excess Returns','Ann. Volatility','Ann. Sharpe Ratio']]
+    metrics_df_final.set_index(['Sector','Commodity'], inplace = True)
+    metrics_df_final.sort_index(inplace=True)
+    
+    return metrics_df_final
 
 if __name__ == '_main_':
     DATA_DIR = Path(config.DATA_DIR)
@@ -179,5 +189,5 @@ if __name__ == '_main_':
     basis_ts = compute_basis_timeseries(pre_processed_df)
     basis_avg = compute_basis_mean(pre_processed_df)
     back_freq = compute_freq_backwardation(pre_processed_df)
-    test_all = combine_metrics(pre_processed_df)
-    print(test_all)
+    combined_metrics_df = combine_metrics(pre_processed_df)
+    print(combined_metrics_df)
