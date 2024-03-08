@@ -12,10 +12,6 @@ import pandas as pd
 import numpy as np
 
 
-DATA_DIR = Path(config.DATA_DIR)
-df = load_commodities_data.load_data(data_dir=DATA_DIR, file_name = "commodities_data.csv")
-pre_processed_df = data_preprocessing.preprocess_data(df)
-
 def compute_num_observations(prep_df):
     """
     Computing average monthly observations
@@ -57,9 +53,9 @@ def compute_performance_metrics(excess_returns_df, annualizing_period = 12):
     avg_hist_excess_returns = excess_returns_df.mean() * annualizing_period * 100
     std_hist_excess_returns = excess_returns_df.std() * np.sqrt(annualizing_period) * 100
     sharpe_ratio = avg_hist_excess_returns/std_hist_excess_returns
-    performance_metrics = pd.DataFrame({"Annualized Hist Avg Excess Returns": avg_hist_excess_returns, 
-                                        "Annualized Hist Avg Volatility": std_hist_excess_returns, 
-                                        "Annualized Sharpe Ratio": sharpe_ratio})
+    performance_metrics = pd.DataFrame({"Ann. Excess Returns": avg_hist_excess_returns, 
+                                        "Ann. Volatility": std_hist_excess_returns, 
+                                        "Ann. Sharpe Ratio": sharpe_ratio})
     return performance_metrics
 
 def get_first_last_to_expire_contract(prep_df, first_to_exp_ind = 1, last_to_expire = False):
@@ -68,7 +64,7 @@ def get_first_last_to_expire_contract(prep_df, first_to_exp_ind = 1, last_to_exp
     
     #Get Commodities which have more than 1 contracts against the same date
     cmdtry_cntrct_count = cmdty_df.groupby(['Commodity', 'Date'])['Contract'].nunique().reset_index(name='Distinct_Contracts')
-    cmdtry_cntrct_atlst_2 = cmdtry_cntrct_count[cmdtry_cntrct_count['Distinct_Contracts'] > 1]
+    cmdtry_cntrct_atlst_2 = cmdtry_cntrct_count[cmdtry_cntrct_count['Distinct_Contracts'] >= 2]
     
     #Get list of the commodities for the aforementioned criterion
     list_of_commodities = cmdtry_cntrct_atlst_2['Commodity'].unique()
@@ -83,7 +79,6 @@ def get_first_last_to_expire_contract(prep_df, first_to_exp_ind = 1, last_to_exp
                                 lambda x: x.loc[x['Date'].idxmax(), ['Date', 'Contract', 'ClosePrice']]).reset_index()
     max_date_price_first_exp['uid'] = max_date_price_first_exp['Commodity'] + max_date_price_first_exp['Date'].astype(str) + max_date_price_first_exp['Contract'].astype(str)
     max_date_price_first_exp.sort_values(by=['Commodity','YearMonth'], inplace =True)
-    #max_date_price_first_exp.set_index('Date', inplace=True)
 
     #### Last to Expire ####
     #Getting Close Prices for Last to Expire Contract per Commodity
@@ -101,6 +96,8 @@ def get_first_last_to_expire_contract(prep_df, first_to_exp_ind = 1, last_to_exp
     
     max_date_cntrct_last_exp_price_df.drop(columns = ['uid'], inplace=True)
     max_date_cntrct_last_exp_price_df.reset_index()
+
+    #print(len(max_date_price_first_exp), len(max_date_cntrct_last_exp_price_df))
 
     if last_to_expire == False:
         return max_date_price_first_exp
@@ -126,21 +123,61 @@ def compute_basis_timeseries(prep_df):
 
     return basis_df_base
 
-def compute_basis_mean(timeseries_basis):
+def compute_basis_mean(prep_df):
+    timeseries_basis = compute_basis_timeseries(prep_df)
     mean_basis = timeseries_basis.groupby(['Commodity'])['Basis'].mean()
     return mean_basis
 
-def compute_freq_backwardation(timeseries_basis):
-    pass
+def compute_freq_backwardation(prep_df):
+    timeseries_basis = compute_basis_timeseries(prep_df)
+    timeseries_basis['in_backwardation'] = timeseries_basis['Basis'].apply(lambda x: 1 if x > 0 else 0)
+    
+    total_basis_count = timeseries_basis.groupby('Commodity')['in_backwardation'].size().to_frame()
+    total_basis_count.reset_index(inplace=True)
+    total_basis_count.rename(columns = {'in_backwardation':'TotalBasisCount'}, inplace=True)
+
+    poistive_basis = timeseries_basis.groupby('Commodity')['in_backwardation'].sum().reset_index()
+    poistive_basis.rename(columns = {'in_backwardation':'PositiveBasisCount'}, inplace=True)
+    
+    backwardation_calc_df = pd.merge(total_basis_count, poistive_basis, how='left', left_on='Commodity',right_on='Commodity')
+    backwardation_calc_df['FreqBackwardation'] = (backwardation_calc_df['PositiveBasisCount'] / backwardation_calc_df['TotalBasisCount']) * 100
+    backwardation_calc_df.set_index('Commodity', inplace = True)
+
+    return backwardation_calc_df
+
+def combine_metrics(prep_df):
+    N = compute_num_observations(prep_df)
+    returns_df = compute_commodity_excess_returns(prep_df)
+    performance_metrics = compute_performance_metrics(returns_df)
+    avg_basis = compute_basis_mean(prep_df)
+    back_freq = compute_freq_backwardation(prep_df)
+    metrics_df = pd.concat([N,performance_metrics,avg_basis,back_freq], axis = 1)
+    metrics_df.drop(columns=['TotalBasisCount','PositiveBasisCount'], inplace = True)
+    metrics_df.reset_index(inplace = True)
+
+    commodity_sector_mapping = {'Cocoa': 'Agriculture','Corn': 'Agriculture','Cotton': 'Agriculture',
+                                'Live cattle': 'Livestock','Oats': 'Agriculture','Orange juice': 'Agriculture',
+                                'Soybean meal': 'Agriculture','Soybeans': 'Agriculture','Wheat': 'Agriculture',
+                                'Feeder cattle': 'Livestock','Coffee': 'Agriculture','Gold': 'Metals','Silver': 'Metals',
+                                'Canola': 'Agriculture','Crude Oil': 'Energy','Heating Oil': 'Energy','Lean hogs': 'Livestock',
+                                'Palladium': 'Metals','Platinum': 'Metals','Lumber': 'Agriculture','Unleaded gas': 'Energy',
+                                'Copper': 'Metals','Rough rice': 'Agriculture','Natural gas': 'Energy','Aluminium': 'Metals','Gasoline': 'Energy'}
+    
+    metrics_df['Sector'] = metrics_df['Commodity'].map(commodity_sector_mapping)
+    metrics_df.set_index(['Sector','Commodity'], inplace = True)
+
+    return metrics_df
 
 # if __name__ == '_main_':
 DATA_DIR = Path(config.DATA_DIR)
-df = load_commodities_data.load_data(data_dir=DATA_DIR, file_name = "commodities_data.csv")
+file_ = config.FILENAME
+df = load_commodities_data.load_data(data_dir=DATA_DIR, file_name = file_)
 pre_processed_df = data_preprocessing.preprocess_data(df)
 returns_df = compute_commodity_excess_returns(pre_processed_df)
 perf_metrics = compute_performance_metrics(returns_df)
-#basis = compute_basis(pre_processed_df)
-ts = get_first_last_to_expire_contract(pre_processed_df, 1, last_to_expire = True)
-bob = compute_basis_timeseries(pre_processed_df)
-basis = compute_basis_mean(bob)
-print(basis)
+first_last_to_expire = get_first_last_to_expire_contract(pre_processed_df)
+basis_ts = compute_basis_timeseries(pre_processed_df)
+basis_avg = compute_basis_mean(pre_processed_df)
+back_freq = compute_freq_backwardation(pre_processed_df)
+test_all = combine_metrics(pre_processed_df)
+print(test_all)
