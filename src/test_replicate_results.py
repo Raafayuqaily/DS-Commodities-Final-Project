@@ -28,7 +28,7 @@ def test_compute_freq_backwardation():
 
     # Test if the function computes frequency of backwardation with positive numerical values
     freq_backwardation = replicate_results.compute_freq_backwardation(prep_df)
-    assert (freq_backwardation['FreqBackwardation'] > 0).all()
+    assert (freq_backwardation['Freq. of Backwardation'] > 0).all()
 
 if __name__ == '__main__':
     pytest.main()
