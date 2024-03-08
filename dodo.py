@@ -10,6 +10,7 @@ import config
 from pathlib import Path
 from doit.tools import run_once
 import platform
+import subprocess
 
 import load_commodities_data
 import data_preprocessing
@@ -107,6 +108,55 @@ def task_replicate_results():
         "file_dep": file_dep,
         "targets": targets,
         "clean": True,
+    }
+
+def task_additional_analysis():
+    """Task to perform additional analysis."""
+    file_dep = [
+        "./src/load_commodities_data.py",
+        "./src/data_preprocessing.py",
+        "./src/config.py",
+        "./src/perform_additional_analysis.py"
+    ]
+    file_output = [
+        "commodities_by_sector.png",
+        "data_availability_heatmap.png",
+        "maximum_contract_number.png",
+        "max_contract_availability.png",
+        "Aluminium_futures_contracts_time_series.png",
+        "monthly_returns_distribution_contract_2.png",
+        "monthly_returns_stats_contract_2.tex",
+        "60_months_rolling_volatility.png",
+        "60_months_rolling_sharpe_ratio.png",
+        "Aluminium_contracts_1_2_basis.png"
+    ]
+    targets = [OUTPUT_DIR / file for file in file_output]
+
+    return {
+        "actions": [
+            "python ./src/perform_additional_analysis.py > ./output/perform_additional_analysis.log"
+        ],
+        "file_dep": file_dep,
+        "targets": targets,
+        "clean": True,
+    }
+
+
+# Function to run tests
+def run_tests():
+    test_files = [
+        'src/test_load_commodities_data.py',
+        'src/test_data_preprocessing.py',
+        'src/test_replicate_results.py',
+        'src/test_perform_additional_analysis.py',
+    ]
+    for test_file in test_files:
+        subprocess.run(['python', test_file], check=True)
+
+# Define a doit task for running tests
+def task_run_tests():
+    return {
+        'actions': [run_tests],
     }
 
 
