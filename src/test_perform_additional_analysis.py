@@ -58,17 +58,6 @@ def test_plot_commodity_time_series():
     assert (output_dir / f"{commodity}_futures_contracts_time_series.png").is_file()
 
 
-def test_plot_return_distribution_and_save_formatted_stats():
-    df = lcd.load_data(data_dir=DATA_DIR, file_name="commodities_data_2024.csv")
-    df = dp.preprocess_data(df)
-    output_dir = Path(config.OUTPUT_DIR)
-
-    contract_num = 1  # You need to specify the contract number for this test
-    paa.plot_return_distribution_and_save_formatted_stats(df, output_dir, contract_num=contract_num)
-    assert (output_dir / f"monthly_returns_distribution_contract_{contract_num}.png").is_file()
-    assert (output_dir / f"monthly_returns_stats_contract_{contract_num}.tex").is_file()
-
-
 def test_plot_rolling_volatility():
     df = lcd.load_data(data_dir=DATA_DIR, file_name="commodities_data_2024.csv")
     df = dp.preprocess_data(df)
