@@ -9,32 +9,42 @@ import replicate_results
 
 DATA_DIR = Path(config.DATA_DIR)
 
-def test_preprocess_data_types():
-    
+def test_compute_num_observations():
+
     df = load_commodities_data.load_data(data_dir=DATA_DIR, file_name="commodities_data_2024.csv")
-    processed_data = data_preprocessing.preprocess_data(df)
+    prep_df = data_preprocessing.preprocess_data(df)
 
-    # Test that data types are as expected after preprocessing
-    assert processed_data['ClosePrice'].dtype == float
-    assert processed_data['Contract'].dtype == int
-    assert processed_data.index.dtype == '<M8[ns]'
+    # Test if the function computes the number of observations correctly
+    obs_df = replicate_results.compute_num_observations(prep_df)
+    assert (obs_df['N'] > 0).all()
 
-def test_preprocess_data_sorting():
-    
+def test_compute_performance_metrics():
+
     df = load_commodities_data.load_data(data_dir=DATA_DIR, file_name="commodities_data_2024.csv")
-    processed_data = data_preprocessing.preprocess_data(df)
+    prep_df = data_preprocessing.preprocess_data(df)
 
-    # Test that the data is sorted correctly after preprocessing
-    assert (processed_data.index == processed_data.index.sort_values()).all()
+    # Test if the function computes performance metrics with numerical values
+    excess_returns_df = replicate_results.compute_commodity_excess_returns(prep_df)
+    performance_metrics = replicate_results.compute_performance_metrics(excess_returns_df)
+    assert performance_metrics.dtypes.apply(pd.api.types.is_numeric_dtype).all()
 
-def test_preprocess_data_column_names():
-    
+def test_compute_basis_mean():
+
     df = load_commodities_data.load_data(data_dir=DATA_DIR, file_name="commodities_data_2024.csv")
-    processed_data = data_preprocessing.preprocess_data(df)
+    prep_df = data_preprocessing.preprocess_data(df)
 
-    # Test that column names are as expected after preprocessing
-    expected_columns = ['Commodity', 'Contract', 'ClosePrice', 'YearMonth']
-    assert all(col in processed_data.columns for col in expected_columns)
+    # Test if the function computes basis mean with numerical values
+    basis_mean = replicate_results.compute_basis_mean(prep_df)
+    assert basis_mean.apply(pd.api.types.is_numeric_dtype).all()
 
-if __name__ == "__main__":
+def test_compute_freq_backwardation():
+
+    df = load_commodities_data.load_data(data_dir=DATA_DIR, file_name="commodities_data_2024.csv")
+    prep_df = data_preprocessing.preprocess_data(df)
+
+    # Test if the function computes frequency of backwardation with positive numerical values
+    freq_backwardation = replicate_results.compute_freq_backwardation(prep_df)
+    assert (freq_backwardation['FreqBackwardation'] > 0).all()
+
+if __name__ == '__main__':
     pytest.main()
