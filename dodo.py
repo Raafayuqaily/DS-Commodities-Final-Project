@@ -96,6 +96,19 @@ def task_data_preprocessing():
         "clean": True,
     }
 
+def task_replicate_results():
+    """Task to replicate the results."""
+    file_dep = ["./src/load_commodities_data.py", "./src/data_preprocessing.py", "./src/config.py"]
+    file_output = ["replicated_results.csv"]
+    targets = [OUTPUT_DIR / file for file in file_output]
+
+    return {
+        "actions": ["python ./src/replicate_results.py > ./output/replicated_results.csv"],
+        "file_dep": file_dep,
+        "targets": targets,
+        "clean": True,
+    }
+
 
 def task_summary_stats():
     """ """
@@ -133,44 +146,6 @@ def task_example_plot():
     }
 
 
-def task_run_notebooks():
-    """Preps the notebooks for presentation format.
-    Execute notebooks with summary stats and plots and remove metadata.
-    """
-    notebooks = [
-        "01_example_notebook.ipynb",
-        "02_interactive_plot_example.ipynb",
-    ]
-    stems = [notebook.split(".")[0] for notebook in notebooks]
-
-    file_dep = [
-        # 'load_other_data.py',
-        *[Path(OUTPUT_DIR) / f"_{stem}.py" for stem in stems],
-    ]
-
-    targets = [
-        ## 01_example_notebook.ipynb output
-        OUTPUT_DIR / "sine_graph.png",
-        ## Notebooks converted to HTML
-        *[OUTPUT_DIR / f"{stem}.html" for stem in stems],
-    ]
-
-    actions = [
-        *[jupyter_execute_notebook(notebook) for notebook in stems],
-        *[jupyter_to_html(notebook) for notebook in stems],
-        *[copy_notebook_to_folder(notebook, Path("./src"), "./docs/_notebook_build/") for notebook in stems],
-        *[jupyter_clear_output(notebook) for notebook in stems],
-        # *[jupyter_to_python(notebook, build_dir) for notebook in notebooks_to_run],
-    ]
-    return {
-        "actions": actions,
-        "targets": targets,
-        "task_dep": [],
-        "file_dep": file_dep,
-        "clean": True,
-    }
-
-
 
 
 def task_compile_latex_docs():
@@ -197,28 +172,5 @@ def task_compile_latex_docs():
         ],
         "targets": targets,
         "file_dep": file_dep,
-        "clean": True,
-    }
-
-
-def task_compile_sphinx_docs():
-    """Compile Sphinx Docs"""
-    file_dep = [
-        "./docs/conf.py",
-        "./docs/index.rst",
-        "./docs/myst_markdown_demos.md",
-        "./docs/api.rst",
-    ]
-    targets = [
-        "./docs/_build/html/index.html",
-        "./docs/_build/html/myst_markdown_demos.html",
-        "./docs/_build/html/api.html",
-    ]
-
-    return {
-        "actions": ["sphinx-build -M html ./docs/ ./docs/_build"],
-        "targets": targets,
-        "file_dep": file_dep,
-        "task_dep": ["run_notebooks"],
         "clean": True,
     }
