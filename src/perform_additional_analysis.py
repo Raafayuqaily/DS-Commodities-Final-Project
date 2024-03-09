@@ -18,10 +18,12 @@ INPUTFILE = config.INPUTFILE
 OUTPUT_DIR = config.OUTPUT_DIR
 STARTDATE = config.STARTDATE_OLD
 ENDDATE = config.ENDDATE_OLD
+LOADBACKPATH_CLEAN = config.LOADBACKPATH_CLEAN
 
-df = dp.clean_process_data(start_date = STARTDATE, end_date = ENDDATE, data_dir = DATA_DIR, input_file = INPUTFILE)
+clean_data_file_path = Path(DATA_DIR) / "manual"/"clean_1970_2008_commodities_data.csv"
+df = pd.read_csv(clean_data_file_path)
 
-def plot_commodities_by_sector(df, output_dir):
+def plot_commodities_by_sector(df, OUTPUT_DIR):
     '''
     This function plots the number of commodities in each sector and stores the plot as a .png file in the output directory.
     '''
@@ -45,11 +47,11 @@ def plot_commodities_by_sector(df, output_dir):
     plt.xlabel('Sector')
 
     # Save the plot
-    file_path = Path(output_dir) / "commodities_by_sector.png"
+    file_path = Path(OUTPUT_DIR) / "commodities_by_sector.png"
     plt.savefig(file_path)
     plt.close()
     
-def plot_data_availability(df, output_dir):
+def plot_data_availability(df, OUTPUT_DIR):
     '''
     This function creates a heatmap showing the availability of data for each commodity across different contracts
     and saves the plot as a .png file in the output directory.
@@ -74,11 +76,11 @@ def plot_data_availability(df, output_dir):
     plt.ylabel('Commodity')
 
     # Save the plot
-    file_path = Path(output_dir) / "data_availability_heatmap.png"
+    file_path = Path(OUTPUT_DIR) / "data_availability_heatmap.png"
     plt.savefig(file_path)
     plt.close()
     
-def plot_max_contract_number(df, output_dir):
+def plot_max_contract_number(df, OUTPUT_DIR):
     '''
     This function plots the maximum contract number available for each commodity and stores the plot as a .png file in the output directory.
     '''
@@ -91,11 +93,11 @@ def plot_max_contract_number(df, output_dir):
     plt.ylabel('Maximum Contract #')
     
     # Save the plot
-    file_path = Path(output_dir) / "maximum_contract_number.png"
+    file_path = Path(OUTPUT_DIR) / "maximum_contract_number.png"
     plt.savefig(file_path)
     plt.close()
     
-def plot_max_contract_availability(df, output_dir):
+def plot_max_contract_availability(df, OUTPUT_DIR):
     '''
     This function creates a grid of plots showing the maximum contract availability at month-end for each commodity
     and stores the figure as a .png file in the output directory.
@@ -134,11 +136,11 @@ def plot_max_contract_availability(df, output_dir):
     plt.tight_layout()
 
     # Save the figure
-    file_path = Path(output_dir) / "max_contract_availability.png"
+    file_path = Path(OUTPUT_DIR) / "max_contract_availability.png"
     fig.savefig(file_path)
     plt.close()
     
-def plot_commodity_time_series(df, output_dir, commodity = 'Aluminium'):
+def plot_commodity_time_series(df, OUTPUT_DIR, commodity = 'Aluminium'):
     '''
     This function creates a time series plot for the specified commodity's futures contracts
     and stores the plot as a .png file in the output directory.
@@ -161,12 +163,12 @@ def plot_commodity_time_series(df, output_dir, commodity = 'Aluminium'):
     plt.legend()
 
     # Save the plot
-    file_path = Path(output_dir) / f"{commodity}_futures_contracts_time_series.png"
+    file_path = Path(OUTPUT_DIR) / f"{commodity}_futures_contracts_time_series.png"
     plt.savefig(file_path)
     plt.close()
      
 
-def plot_return_distribution_and_save_formatted_stats(df, output_dir, contract_num = 2):
+def plot_return_distribution_and_save_formatted_stats(df, OUTPUT_DIR, contract_num = 2):
     '''
     This function creates a histogram plot showing the distribution of monthly returns for a specific contract,
     stores the plot as a .png file, and saves the formatted descriptive statistics in a LaTeX-formatted table.
@@ -186,7 +188,7 @@ def plot_return_distribution_and_save_formatted_stats(df, output_dir, contract_n
     plt.ylabel('Frequency')
     
     # Save the plot
-    file_path = Path(output_dir) / f"monthly_returns_distribution_contract_{contract_num}.png"
+    file_path = Path(OUTPUT_DIR) / f"monthly_returns_distribution_contract_{contract_num}.png"
     plt.savefig(file_path)
     plt.close()
 
@@ -210,11 +212,11 @@ def plot_return_distribution_and_save_formatted_stats(df, output_dir, contract_n
     stats_df = pd.DataFrame(formatted_stats).transpose()
 
     # Save the descriptive statistics as a LaTeX table
-    stats_file_path = Path(output_dir) / f"monthly_returns_stats_contract_{contract_num}.tex"
+    stats_file_path = Path(OUTPUT_DIR) / f"monthly_returns_stats_contract_{contract_num}.tex"
     with open(stats_file_path, 'w') as f:
         f.write(stats_df.to_latex(escape=False))
 
-def plot_rolling_volatility(df, output_dir, rolling_window=60, contract_num=2):
+def plot_rolling_volatility(df, OUTPUT_DIR, rolling_window=60, contract_num=2):
     '''
     This function creates a plot showing the 5-year rolling volatility (annualized) and stores the plot as a .png file in the output directory.
     '''
@@ -232,11 +234,11 @@ def plot_rolling_volatility(df, output_dir, rolling_window=60, contract_num=2):
     plt.ylabel('Rolling Volatility')
 
     # Save the plot
-    file_path = Path(output_dir) / f"{rolling_window}_months_rolling_volatility.png"
+    file_path = Path(OUTPUT_DIR) / f"{rolling_window}_months_rolling_volatility.png"
     plt.savefig(file_path)
     plt.close()
     
-def plot_rolling_sharpe_ratio(df, output_dir, rolling_window=60, contract_num =2):
+def plot_rolling_sharpe_ratio(df, OUTPUT_DIR, rolling_window=60, contract_num =2):
     '''
     This function creates a plot showing the rolling Sharpe ratio and stores the plot as a .png file in the output directory.
     '''
@@ -256,11 +258,11 @@ def plot_rolling_sharpe_ratio(df, output_dir, rolling_window=60, contract_num =2
     plt.ylabel('Rolling Sharpe Ratio')
 
     # Save the plot
-    file_path = Path(output_dir) / f"{rolling_window}_months_rolling_sharpe_ratio.png"
+    file_path = Path(OUTPUT_DIR) / f"{rolling_window}_months_rolling_sharpe_ratio.png"
     plt.savefig(file_path)
     plt.close()
 
-def plot_basis_with_contracts(df, first_contract_num, last_contract_num,  output_dir, commodity= 'Aluminium'):
+def plot_basis_with_contracts(df, first_contract_num, last_contract_num,  OUTPUT_DIR, commodity= 'Aluminium'):
     '''
     This function calculates the basis, plots it along with the first and last contract prices for the specified commodity,
     and stores the plot as a .png file in the output directory.
@@ -301,8 +303,10 @@ def plot_basis_with_contracts(df, first_contract_num, last_contract_num,  output
     ax2.legend(lines + lines2, labels + labels2, loc='upper left')
 
     # Save the plot
-    file_path = Path(output_dir) / f"{commodity}_contracts_{first_contract_num}_{last_contract_num}_basis.png"
+    file_path = Path(OUTPUT_DIR) / f"{commodity}_contracts_{first_contract_num}_{last_contract_num}_basis.png"
     plt.savefig(file_path)
     plt.close()
 
 
+if __name__ == '__main__':
+    com_sec = plot_commodities_by_sector(df, OUTPUT_DIR)

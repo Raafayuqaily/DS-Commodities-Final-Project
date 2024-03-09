@@ -6,6 +6,7 @@ import logging
 import config
 import replicate_results  
 logging.basicConfig(level=logging.INFO)
+logging.basicConfig(level=logging.INFO, format='%(message)s')
 
 
 OUTPUT_DIR = Path(config.OUTPUT_DIR)
@@ -13,7 +14,7 @@ DATA_DIR = config.DATA_DIR
 INPUTFILE = config.INPUTFILE
 
 def generate_latex_table(metrics_df_final, output_table_name):
-    logging.basicConfig(level=logging.INFO, format='%(message)s')
+
     try:
         # Convert the DataFrame to a LaTeX string
         latex_table_string = metrics_df_final.to_latex(index=True, float_format="%.2f")

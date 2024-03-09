@@ -77,6 +77,8 @@ def task_data_preprocessing():
 
     #Execute the following task
     action = ["python src/data_preprocessing.py"]
+    
+    #return stuff
     return{
         "actions":action,
         "file_dep":file_dep,
@@ -97,6 +99,8 @@ def task_replicate_results():
 
     #Execute the following task
     action = ["python src/replicate_results.py"]
+
+    #return stuff
     return{
         "actions":action,
         "file_dep":file_dep,
@@ -104,36 +108,37 @@ def task_replicate_results():
         "clean":True
         }
 
-# def task_additional_analysis():
-#     """Task to perform additional analysis."""
-#     file_dep = [
-#         "./src/load_commodities_data.py",
-#         "./src/data_preprocessing.py",
-#         "./src/config.py",
-#         "./src/perform_additional_analysis.py"
-#     ]
-#     file_output = [
-#         "commodities_by_sector.png",
-#         "data_availability_heatmap.png",
-#         "maximum_contract_number.png",
-#         "max_contract_availability.png",
-#         "Aluminium_futures_contracts_time_series.png",
-#         "monthly_returns_distribution_contract_2.png",
-#         "monthly_returns_stats_contract_2.tex",
-#         "60_months_rolling_volatility.png",
-#         "60_months_rolling_sharpe_ratio.png",
-#         "Aluminium_contracts_1_2_basis.png"
-#     ]
-#     targets = [OUTPUT_DIR / file for file in file_output]
+def task_additional_analysis():
+    """Task to perform additional analysis."""
 
-#     return {
-#         "actions": [
-#             "python ./src/perform_additional_analysis.py > ./output/perform_additional_analysis.log"
-#         ],
-#         "file_dep": file_dep,
-#         "targets": targets,
-#         "clean": True,
-#     }
+    #Check if Commodities_data.csv is available to load
+    file_dep = [DATA_DIR / "manual"/"clean_1970_2008_commodities_data.csv"]
+
+    file_output = [
+        "commodities_by_sector.png",
+        "data_availability_heatmap.png",
+        "maximum_contract_number.png",
+        "max_contract_availability.png",
+        "Aluminium_futures_contracts_time_series.png",
+        "monthly_returns_distribution_contract_2.png",
+        "monthly_returns_stats_contract_2.tex",
+        "60_months_rolling_volatility.png",
+        "60_months_rolling_sharpe_ratio.png",
+        "Aluminium_contracts_1_2_basis.png"
+    ]
+
+    target = [OUTPUT_DIR / file for file in file_output]
+
+    #Execute the following task
+    action = ["python src/perform_additional_analysis.py"]
+
+    #return stuff
+    return{
+        "actions":action,
+        "file_dep":file_dep,
+        "targets":target,
+        "clean":True
+        }
 
 
 # # Function to run tests
