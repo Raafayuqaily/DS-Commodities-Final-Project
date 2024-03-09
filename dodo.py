@@ -108,6 +108,28 @@ def task_replicate_results():
         "clean":True
         }
 
+def task_produce_tables_latex():
+    """Task to replicate the results."""
+
+    #Check if Clean Datasets are available to load
+    processed_files = [f for f in LOADBACKPATH_CLEAN.iterdir() if f.name.startswith("clean") and f.is_file()]
+    file_dep = [DATA_DIR / "manual" / file for file in processed_files]
+    
+    #Check if LaTex Tables are already Available
+    output_files = [f for f in OUTPUT_DIR.iterdir() if f.name.startswith("Tex") and f.is_file()]
+    target = [OUTPUT_DIR/ file for file in output_files]
+
+    #Execute the following task
+    action = ["python src/df_to_latex.py"]
+
+    #return stuff
+    return{
+        "actions":action,
+        "file_dep":file_dep,
+        "targets":target,
+        "clean":True
+        }
+
 def task_additional_analysis():
     """Task to perform additional analysis."""
 

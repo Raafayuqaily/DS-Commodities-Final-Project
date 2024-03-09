@@ -39,5 +39,5 @@ if __name__ == "__main__":
         clean_data_file_path = Path(DATA_DIR) / "manual"/f"clean_{start_}_{end_}_{INPUTFILE}"
         clean_data_df = pd.read_csv(clean_data_file_path)
         combined_metrics_df_txt = replicate_results.combine_metrics(clean_data_df)
-        output_table_name = f"Table1__{start_}_{end_}"
+        output_table_name = f"Tex_Table1__{start_}_{end_}"
         generate_latex_table(combined_metrics_df_txt, output_table_name)
