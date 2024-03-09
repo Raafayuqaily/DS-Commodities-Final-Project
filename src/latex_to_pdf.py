@@ -7,7 +7,7 @@ import config
 
 # Set the directory where your LaTeX files are stored and where the PDFs should be saved
 # Assuming they are in the reports folder and will be saved there as well
-LATEX_DIR = Path(config.REPORT_DIR)
+LATEX_DIR = Path(config.OUTPUT_DIR)
 
 # Ensure the output directory exists
 LATEX_DIR.mkdir(parents=True, exist_ok=True)

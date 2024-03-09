@@ -19,13 +19,16 @@ over to the other configuration, for example.
 """
 from decouple import config
 from pathlib import Path
-import pandas as pd
+import os
+
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 DATA_DIR = (BASE_DIR / config('DATA_DIR', default=Path('data'), cast=Path)).resolve()
 OUTPUT_DIR = (BASE_DIR / config('OUTPUT_DIR', default=Path('output'), cast=Path)).resolve()
-FILENAME = 'commodities_data_2024.csv'
+LOADBACKPATH_CLEAN = Path(DATA_DIR / "manual")
+
+INPUTFILE = 'commodities_data.csv'
 
 STARTDATE_OLD = '1970-01-01'
 ENDDATE_OLD = '2008-12-31'
@@ -34,12 +37,4 @@ STARTDATE_NEW = '2009-01-01'
 ENDDATE_NEW = '2024-12-31'
 
 if __name__ == "__main__":
-    
-    ## If they don't exist, create the data and output directories
-    # (DATA_DIR / 'manual').mkdir(parents=True, exist_ok=True)
-
-    # Sometimes, I'll create other folders to organize the data
-    # (DATA_DIR / 'intermediate').mkdir(parents=True, exist_ok=True)
-    # (DATA_DIR / 'derived').mkdir(parents=True, exist_ok=True)
-
     OUTPUT_DIR.mkdir(parents=True, exist_ok=True)

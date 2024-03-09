@@ -1,31 +1,39 @@
+# This Python file is designed to load data from the local drive
+
+#This Python file loads the data from the drive
+#Cleans and Processes the data as per the requirement
+import warnings
+import logging
+warnings.filterwarnings("ignore")
+
 import pandas as pd
 import config
 from pathlib import Path
 
-DATA_DIR = Path(config.DATA_DIR)
+DATA_DIR = config.DATA_DIR
+INPUTFILE = config.INPUTFILE
 
-file_ = config.FILENAME
-
-def load_data(data_dir = DATA_DIR, file_name = file_):
+def load_data(data_dir = DATA_DIR, input_file = INPUTFILE):
     """
-    Load commodities data csv, stored in /data/manual
-    Setting the index of the dataframe to Date
-    Returning the dataframe
+    Input:
+        1. Data Directory, where the data is stored
+        2. file_name = file that the user wants to load (Commodities in our case)
+    
+    Output:
+        DataFrame created by reading the csv
     """
-    file_path = Path(data_dir) / "manual" / file_
-    df = pd.read_csv(file_path)
-    return df
+    file_path = Path(data_dir) / "manual" / input_file
+    try:
+        df = pd.read_csv(file_path)
+        logging.info("Commodities Data loaded successfully!")
+        return df
+    except Exception as e:
+        logging.error(f"An error occurred while loading the data: {e}")
+        raise e
 
-def demo():
-    """
-    Creating an execution function for load_data
-    that prints the first 5 rows of the dataframe
-    """
-    df = load_data(DATA_DIR, file_name = file_)
-    print(df.head())
-
-if __name__ == "_main_":
-    demo()
-
-
-
+if __name__ == '__main__':
+    logging.basicConfig(level=logging.INFO, format='%(message)s')
+    try:
+        df = load_data(DATA_DIR, INPUTFILE)
+    except Exception as e:
+        logging.error(f"Failed to load data: {e}")

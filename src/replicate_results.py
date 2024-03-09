@@ -4,17 +4,24 @@
 import warnings
 warnings.filterwarnings("ignore")
 
-import load_commodities_data
-import data_preprocessing
 import config
 from pathlib import Path
 import pandas as pd
 import numpy as np
+import logging
+logging.basicConfig(level=logging.INFO, format='%(message)s')
+
+DATA_DIR = config.DATA_DIR
+INPUTFILE = config.INPUTFILE
+OUTPUT_DIR = config.OUTPUT_DIR
 
 
 def compute_num_observations(prep_df):
     """
-    Computing average monthly observations
+    Inputs:
+    
+    Output:
+
     """
     df = prep_df
     df.reset_index(inplace=True)
@@ -27,7 +34,10 @@ def compute_num_observations(prep_df):
 
 def compute_commodity_excess_returns(prep_df):
     """
-    Computing Historical Excess Returns for Futures
+    Inputs:
+    
+    Output:
+
     """
     cmdty_cntrct_2_df = prep_df[prep_df['Contract']==2]
     cmdty_cntrct_2_df.reset_index(inplace = True)
@@ -41,7 +51,7 @@ def compute_commodity_excess_returns(prep_df):
 
 def compute_performance_metrics(excess_returns_df, annualizing_period = 12):
     """
-    Input:
+    Inputs:
         1. DataFrame of Historical Excess Returns
         2. Annualizing Period, default value set to 12 (Convert Monthly to Yearly)
     
@@ -60,6 +70,12 @@ def compute_performance_metrics(excess_returns_df, annualizing_period = 12):
 
 def get_first_last_to_expire_contract(prep_df, first_to_exp_ind = 1, last_to_expire = False):
     
+    """
+    Inputs:
+    
+    Output:
+
+    """
     cmdty_df = prep_df
     
     #Get Commodities which have more than 1 contracts against the same date
@@ -103,6 +119,12 @@ def get_first_last_to_expire_contract(prep_df, first_to_exp_ind = 1, last_to_exp
         return max_date_cntrct_last_exp_price_df
 
 def compute_basis_timeseries(prep_df):
+    """
+    Inputs:
+    
+    Output:
+
+    """
     prep_df = prep_df
     first_to_expire = get_first_last_to_expire_contract(prep_df, 1, False)
     first_to_expire['uid'] = first_to_expire['Commodity'] + first_to_expire['Date'].astype(str)
@@ -123,12 +145,24 @@ def compute_basis_timeseries(prep_df):
     return basis_df_base
 
 def compute_basis_mean(prep_df):
+    """
+    Inputs:
+    
+    Output:
+
+    """
     prep_df = prep_df
     timeseries_basis = compute_basis_timeseries(prep_df)
     mean_basis = timeseries_basis.groupby(['Commodity'])['Basis'].mean()
     return mean_basis
 
 def compute_freq_backwardation(prep_df):
+    """
+    Inputs:
+    
+    Output:
+
+    """
     prep_df=prep_df
     timeseries_basis = compute_basis_timeseries(prep_df)
     timeseries_basis['in_backwardation'] = timeseries_basis['Basis'].apply(lambda x: 1 if x > 0 else 0)
@@ -147,6 +181,12 @@ def compute_freq_backwardation(prep_df):
     return backwardation_calc_df
 
 def combine_metrics(prep_df):
+    """
+    Inputs:
+    
+    Output:
+
+    """
     prep_df = prep_df
     N = compute_num_observations(prep_df)
     returns_df = compute_commodity_excess_returns(prep_df)
@@ -178,16 +218,22 @@ def combine_metrics(prep_df):
     
     return metrics_df_final
 
-if __name__ == '_main_':
-    DATA_DIR = Path(config.DATA_DIR)
-    file_ = config.FILENAME
-    df = load_commodities_data.load_data(data_dir=DATA_DIR, file_name = file_)
-    pre_processed_df = data_preprocessing.preprocess_data(df)
-    returns_df = compute_commodity_excess_returns(pre_processed_df)
-    perf_metrics = compute_performance_metrics(returns_df)
-    first_last_to_expire = get_first_last_to_expire_contract(pre_processed_df)
-    basis_ts = compute_basis_timeseries(pre_processed_df)
-    basis_avg = compute_basis_mean(pre_processed_df)
-    back_freq = compute_freq_backwardation(pre_processed_df)
-    combined_metrics_df = combine_metrics(pre_processed_df)
-    print(combined_metrics_df)
+if __name__ == '__main__':
+    start_dates = [config.STARTDATE_OLD[:4], config.STARTDATE_NEW[:4]]
+    end_dates = [config.ENDDATE_OLD[:4], config.ENDDATE_NEW[:4]]
+    
+    for start_, end_ in zip(start_dates, end_dates):
+        clean_data_file_path = Path(DATA_DIR) / "manual"/f"clean_{start_}_{end_}_{INPUTFILE}"
+        clean_data_df = pd.read_csv(clean_data_file_path)
+        
+        logging.info(f"\nFor Time Period, {start_} to {end_}:")
+        
+        combined_metrics_df = combine_metrics(clean_data_df)
+        output_file = f"Table1__{start_}_{end_}.xlsx"
+        OUTPATH_path = Path(OUTPUT_DIR) / output_file
+
+        try:
+            combined_metrics_df.to_excel(OUTPATH_path)
+            logging.info(f"{output_file} Stored Successfully!")
+        except Exception as e:
+            logging.error(f"An error occurred while Storing the {f"{output_file}"}: {e}") 

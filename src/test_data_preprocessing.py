@@ -3,15 +3,16 @@ import pytest
 import config
 from pathlib import Path
 
-import load_commodities_data
 import data_preprocessing
 
-DATA_DIR = Path(config.DATA_DIR)
+DATA_DIR = config.DATA_DIR
+INPUTFILE = config.INPUTFILE
+STARTDATE = config.STARTDATE_OLD
+ENDDATE = config.ENDDATE_OLD
 
 def test_preprocess_data_types():
     
-    df = load_commodities_data.load_data(data_dir=DATA_DIR, file_name="commodities_data_2024.csv")
-    processed_data = data_preprocessing.preprocess_data(df)
+    processed_data = data_preprocessing.clean_process_data(start_date = STARTDATE, end_date = ENDDATE, data_dir = DATA_DIR, input_file = INPUTFILE)
 
     # Test that data types are as expected after preprocessing
     assert processed_data['ClosePrice'].dtype == float
@@ -20,16 +21,14 @@ def test_preprocess_data_types():
 
 def test_preprocess_data_sorting():
     
-    df = load_commodities_data.load_data(data_dir=DATA_DIR, file_name="commodities_data_2024.csv")
-    processed_data = data_preprocessing.preprocess_data(df)
+    processed_data = data_preprocessing.clean_process_data(start_date = STARTDATE, end_date = ENDDATE, data_dir = DATA_DIR, input_file = INPUTFILE)
 
     # Test that the data is sorted correctly after preprocessing
     assert (processed_data.index == processed_data.index.sort_values()).all()
 
 def test_preprocess_data_column_names():
     
-    df = load_commodities_data.load_data(data_dir=DATA_DIR, file_name="commodities_data_2024.csv")
-    processed_data = data_preprocessing.preprocess_data(df)
+    processed_data = data_preprocessing.clean_process_data(start_date = STARTDATE, end_date = ENDDATE, data_dir = DATA_DIR, input_file = INPUTFILE)
 
     # Test that column names are as expected after preprocessing
     expected_columns = ['Commodity', 'Contract', 'ClosePrice', 'YearMonth']

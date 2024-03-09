@@ -3,31 +3,31 @@ import pytest
 import config
 from pathlib import Path
 
-import load_commodities_data
-import data_preprocessing
 import replicate_results
 
-DATA_DIR = Path(config.DATA_DIR)
+DATA_DIR = config.DATA_DIR
+INPUTFILE = config.INPUTFILE
+
+start_ = config.STARTDATE_OLD[:4]
+end_ = config.ENDDATE_OLD[:4]
 
 
 def test_compute_performance_metrics():
-
-    df = load_commodities_data.load_data(data_dir=DATA_DIR, file_name="commodities_data_2024.csv")
-    prep_df = data_preprocessing.preprocess_data(df)
+    clean_data_file_path = Path(DATA_DIR) / "manual"/f"clean_{start_}_{end_}_{INPUTFILE}"
+    clean_data_df = pd.read_csv(clean_data_file_path)
 
     # Test if the function computes performance metrics with numerical values
-    excess_returns_df = replicate_results.compute_commodity_excess_returns(prep_df)
+    excess_returns_df = replicate_results.compute_commodity_excess_returns(clean_data_df)
     performance_metrics = replicate_results.compute_performance_metrics(excess_returns_df)
     assert performance_metrics.dtypes.apply(pd.api.types.is_numeric_dtype).all()
 
 
 def test_compute_freq_backwardation():
-
-    df = load_commodities_data.load_data(data_dir=DATA_DIR, file_name="commodities_data_2024.csv")
-    prep_df = data_preprocessing.preprocess_data(df)
+    clean_data_file_path = Path(DATA_DIR) / "manual"/f"clean_{start_}_{end_}_{INPUTFILE}"
+    clean_data_df = pd.read_csv(clean_data_file_path)
 
     # Test if the function computes frequency of backwardation with positive numerical values
-    freq_backwardation = replicate_results.compute_freq_backwardation(prep_df)
+    freq_backwardation = replicate_results.compute_freq_backwardation(clean_data_df)
     assert (freq_backwardation['Freq. of Backwardation'] > 0).all()
 
 if __name__ == '__main__':

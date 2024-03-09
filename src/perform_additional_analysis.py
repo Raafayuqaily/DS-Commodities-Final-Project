@@ -11,17 +11,15 @@ warnings.filterwarnings("ignore")
 import config
 from pathlib import Path
 
-import load_commodities_data as lcd
 import data_preprocessing as dp
 
-DATA_DIR = Path(config.DATA_DIR)
-data_dir = DATA_DIR
-outpit_dir = Path(config.OUTPUT_DIR)
+DATA_DIR = config.DATA_DIR
+INPUTFILE = config.INPUTFILE
+OUTPUT_DIR = config.OUTPUT_DIR
+STARTDATE = config.STARTDATE_OLD
+ENDDATE = config.ENDDATE_OLD
 
-file_name = "commodities_data_2024.csv"
-
-df = lcd.load_data(data_dir, file_name)
-df = dp.preprocess_data(df)
+df = dp.clean_process_data(start_date = STARTDATE, end_date = ENDDATE, data_dir = DATA_DIR, input_file = INPUTFILE)
 
 def plot_commodities_by_sector(df, output_dir):
     '''
