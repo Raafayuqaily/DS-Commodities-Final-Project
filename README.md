@@ -12,21 +12,13 @@ While gathering data for the project, we ran into several challenges and made ce
 As given in Table 1 of the study, we have calculated the following metrics for the data
 1. $N$, 
     - The number of Monthly Observations available for a commodity 
-2. Annualized Historical Excess Returns, 
+2. Annualized Historical Excess Returns 
 3. Annualized Historical Volatility
 4. Annaulized Sharpe Ratio
 5. Basis
 6. Frequence of Backwardation
     - A commodity is said to be in backwardation if its basis is positive.
 
-## Metric Formulae
-
-Monthly Excess Returns
-$$R^{e}_{i,t+1,T} = \frac{F_{i,t+1,T}}{F_{i,t,T}} - 1$$
-
-Where $F_{i,t,T}$ respresents the Futures Prices for Commodity $i$, at time $t$, with Maturity date $T$.
-
-Basis
 
 
 # Quick Start
