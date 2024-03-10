@@ -71,5 +71,5 @@ if __name__ == '__main__':
             clean_df.to_csv(file_path)
             logging.info(f"clean_{start_[:4]}_{end_[:4]}_{INPUTFILE} Stored Successfully!")
         except Exception as e:
-            logging.error(f"An error occurred while Storing the {f"clean_{start_[:4]}_{end_[:4]}_{INPUTFILE}"}: {e}") 
+            logging.error(f"An error occurred while Storing the clean_{start_[:4]}_{end_[:4]}_{INPUTFILE}: {e}") 
 
