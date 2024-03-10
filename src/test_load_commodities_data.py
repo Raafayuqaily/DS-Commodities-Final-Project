@@ -1,3 +1,10 @@
+"""
+This module is designed for testing the functionality and data completeness of the `load_data` function 
+from the `load_commodities_data` module. It includes tests to ensure that data is correctly loaded into 
+a pandas DataFrame and that the resulting DataFrame meets expected properties such as containing the 
+correct columns and a sufficient variety of commodity data.
+"""
+
 import pandas as pd
 import pytest
 import config
@@ -10,6 +17,15 @@ INPUTFILE = config.INPUTFILE
 
 
 def test_load_commodities_data_functionality():
+    """
+    Tests the basic functionality of the `load_data` function from the `load_commodities_data` module.
+
+    This function checks:
+    - If the returned object is a pandas DataFrame.
+    - If the returned DataFrame is not empty.
+    - If a FileNotFoundError is raised when an invalid directory is provided.
+    """
+
     df = load_commodities_data.load_data(data_dir=DATA_DIR, input_file = INPUTFILE)
     
     # Test if the function returns a pandas DataFrame
@@ -24,6 +40,15 @@ def test_load_commodities_data_functionality():
 
 
 def test_load_commodities_data_completedness():
+    """
+    Tests the data completeness for the DataFrame returned by the `load_data` function 
+    from the `load_commodities_data` module.
+
+    This function checks:
+    - If the DataFrame contains specific expected columns.
+    - If the DataFrame contains a sufficient variety of commodities (at least 25 unique).
+    """
+
     df = load_commodities_data.load_data(data_dir=DATA_DIR, input_file = INPUTFILE)
 
     # Test if the DataFrame has the expected columns
