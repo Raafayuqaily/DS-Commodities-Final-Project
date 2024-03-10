@@ -20,8 +20,8 @@ STARTDATE = config.STARTDATE_OLD
 ENDDATE = config.ENDDATE_OLD
 LOADBACKPATH_CLEAN = config.LOADBACKPATH_CLEAN
 
-clean_data_file_path = Path(DATA_DIR) / "manual"/"clean_1970_2008_commodities_data.csv"
-df = pd.read_csv(clean_data_file_path)
+clean_data_file_path_1970 = Path(DATA_DIR) / "manual"/"clean_1970_2008_commodities_data.csv"
+df = pd.read_csv(clean_data_file_path_1970)
 
 def plot_commodities_by_sector(df, OUTPUT_DIR):
     '''
@@ -102,6 +102,11 @@ def plot_max_contract_availability(df, OUTPUT_DIR):
     This function creates a grid of plots showing the maximum contract availability at month-end for each commodity
     and stores the figure as a .png file in the output directory.
     '''
+
+    if 'Date' in df.columns and not isinstance(df.index, pd.DatetimeIndex):
+        df['Date'] = pd.to_datetime(df['Date'])  # Convert 'Date' column to datetime
+        df.set_index('Date', inplace=True)  # Set 'Date' column as the index
+
     # Group by 'Commodity', resample to month-end, and find the maximum contract number
     sample_df_grouped = df.groupby('Commodity').resample('M').max()
     sample_df_grouped = sample_df_grouped.drop(columns='Commodity').reset_index()
@@ -166,55 +171,6 @@ def plot_commodity_time_series(df, OUTPUT_DIR, commodity = 'Aluminium'):
     file_path = Path(OUTPUT_DIR) / f"{commodity}_futures_contracts_time_series.png"
     plt.savefig(file_path)
     plt.close()
-     
-
-def plot_return_distribution_and_save_formatted_stats(df, OUTPUT_DIR, contract_num = 2):
-    '''
-    This function creates a histogram plot showing the distribution of monthly returns for a specific contract,
-    stores the plot as a .png file, and saves the formatted descriptive statistics in a LaTeX-formatted table.
-    '''
-    
-    # Prepare the returns DataFrame
-    
-    returns_df = df[df['Contract'] == contract_num].resample('M').last()
-    returns_df['Monthly returns'] = returns_df['ClosePrice'].pct_change()
-    returns_df = returns_df.dropna()
-
-    # Plotting the distribution of monthly returns with a histogram
-    plt.figure(figsize=(10, 6))
-    sns.histplot(returns_df['Monthly returns'], kde=True, bins=30)
-    plt.title(f'Distribution of Monthly Returns for Contract {contract_num}')
-    plt.xlabel('Monthly Returns')
-    plt.ylabel('Frequency')
-    
-    # Save the plot
-    file_path = Path(OUTPUT_DIR) / f"monthly_returns_distribution_contract_{contract_num}.png"
-    plt.savefig(file_path)
-    plt.close()
-
-    # Calculating descriptive statistics
-    stats = returns_df['Monthly returns'].describe()
-    stats['skew'] = skew(returns_df['Monthly returns'])
-    stats['kurtosis'] = kurtosis(returns_df['Monthly returns'])
-
-    def format_stats(stats):
-        stats['count'] = stats['count'].astype(int)
-        for key in ['mean', 'std', 'min', '25%', '50%', '75%', 'max']:
-            stats[key] = stats[key].apply(lambda x: f"{x:.2%}")
-        for key in ['skew', 'kurtosis']:
-            stats[key] = stats[key].apply(lambda x: f"{x:.2f}")
-        return stats
-    
-    # Format the stats
-    formatted_stats = format_stats(stats)
-
-    # Convert the stats to a DataFrame for easier LaTeX export
-    stats_df = pd.DataFrame(formatted_stats).transpose()
-
-    # Save the descriptive statistics as a LaTeX table
-    stats_file_path = Path(OUTPUT_DIR) / f"monthly_returns_stats_contract_{contract_num}.tex"
-    with open(stats_file_path, 'w') as f:
-        f.write(stats_df.to_latex(escape=False))
 
 def plot_rolling_volatility(df, OUTPUT_DIR, rolling_window=60, contract_num=2):
     '''
@@ -262,51 +218,13 @@ def plot_rolling_sharpe_ratio(df, OUTPUT_DIR, rolling_window=60, contract_num =2
     plt.savefig(file_path)
     plt.close()
 
-def plot_basis_with_contracts(df, first_contract_num, last_contract_num,  OUTPUT_DIR, commodity= 'Aluminium'):
-    '''
-    This function calculates the basis, plots it along with the first and last contract prices for the specified commodity,
-    and stores the plot as a .png file in the output directory.
-    '''
-    df_select = df[df['Commodity'] == commodity]
-    unique_contracts = df_select['Contract'].unique()
-    first_contract_num = unique_contracts[0]
-    last_contract_num = unique_contracts[-1]
-    
-    # Filter the DataFrame for the first and last contracts
-    contract1_df = df[df['Contract'] == first_contract_num]
-    contract12_df = df[df['Contract'] == last_contract_num]
-
-    # Merge the two contract DataFrames
-    merged_df = pd.merge(contract1_df['ClosePrice'], contract12_df['ClosePrice'], left_index=True, right_index=True, suffixes=('_first', '_last')).ffill()
-
-    # Calculate the basis
-    merged_df = merged_df.resample('M').last()
-    merged_df['Basis'] = ((np.log(merged_df['ClosePrice_first']) - np.log(merged_df['ClosePrice_last'])) / (last_contract_num - first_contract_num)) * 100
-
-    # Set up the plot
-    fig, ax1 = plt.subplots(figsize=(12, 6))
-    ax1.plot(merged_df.index, merged_df['ClosePrice_first'], label=f'Contract {first_contract_num}', color='blue')
-    ax1.plot(merged_df.index, merged_df['ClosePrice_last'], label=f'Contract {last_contract_num}', color='orange')
-    ax1.set_xlabel('Date')
-    ax1.set_ylabel('Price', color='black')
-
-    # Create a second y-axis for the basis
-    ax2 = ax1.twinx()
-    ax2.plot(merged_df.index, merged_df['Basis'], label='Basis', color='grey')
-    ax2.set_ylabel('Basis (%)', color='grey')
-    ax2.fill_between(merged_df.index, 0, merged_df['Basis'], color='grey', alpha=0.2)
-
-    # Add titles and legend
-    plt.title(f'{commodity} Contracts {first_contract_num} and {last_contract_num} with Basis Over Time')
-    lines, labels = ax1.get_legend_handles_labels()
-    lines2, labels2 = ax2.get_legend_handles_labels()
-    ax2.legend(lines + lines2, labels + labels2, loc='upper left')
-
-    # Save the plot
-    file_path = Path(OUTPUT_DIR) / f"{commodity}_contracts_{first_contract_num}_{last_contract_num}_basis.png"
-    plt.savefig(file_path)
-    plt.close()
-
 
 if __name__ == '__main__':
     com_sec = plot_commodities_by_sector(df, OUTPUT_DIR)
+    data_ava = plot_data_availability(df, OUTPUT_DIR)
+    max_contract_num = plot_max_contract_number(df, OUTPUT_DIR)
+    max_contract_ava = plot_max_contract_availability(df, OUTPUT_DIR)
+    com_time_ser = plot_commodity_time_series(df, OUTPUT_DIR)
+    rolling_vol = plot_rolling_volatility(df, OUTPUT_DIR)
+    rolling_sharpe = plot_rolling_sharpe_ratio(df, OUTPUT_DIR)
+
