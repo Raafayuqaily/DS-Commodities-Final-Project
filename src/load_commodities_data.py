@@ -1,7 +1,8 @@
-# This Python file is designed to load data from the local drive
+"""
+This module is designed for loading and initial processing of commodity data stored in a local directory. 
+It includes functionality to load data from a specified CSV file and logs the status of data loading.
+"""
 
-#This Python file loads the data from the drive
-#Cleans and Processes the data as per the requirement
 import warnings
 import logging
 warnings.filterwarnings("ignore")
@@ -15,13 +16,16 @@ INPUTFILE = config.INPUTFILE
 
 def load_data(data_dir = DATA_DIR, input_file = INPUTFILE):
     """
-    Input:
-        1. Data Directory, where the data is stored
-        2. file_name = file that the user wants to load (Commodities in our case)
+    Load commodity data from a specified file within a specified directory.
     
-    Output:
-        DataFrame created by reading the csv
+    Parameters:
+        data_dir (str): Directory where the data file is stored.
+        input_file (str): Name of the file to load.
+        
+    Returns:
+        pandas.DataFrame: Data frame containing the loaded commodity data.
     """
+    
     file_path = Path(data_dir) / "manual" / input_file
     try:
         df = pd.read_csv(file_path)
