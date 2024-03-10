@@ -236,4 +236,4 @@ if __name__ == '__main__':
             combined_metrics_df.to_excel(OUTPATH_path)
             logging.info(f"{output_file} Stored Successfully!")
         except Exception as e:
-            logging.error(f"An error occurred while Storing the {f"{output_file}"}: {e}") 
+            logging.error(f"An error occurred while Storing the {output_file}: {e}") 
