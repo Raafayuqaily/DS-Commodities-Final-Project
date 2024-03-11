@@ -1,5 +1,9 @@
-# This python file is designed to compute the required metrics
-# and poppulate and return a dataframe that replicates Table 1 from the study
+"""
+This module is designed to compute various  metrics and populate a DataFrame that replicates (Table 1). 
+It includes functions for calculating the number of observations, commodity excess returns, performance metrics, 
+first-to-expire contracts, basis time series, mean basis, frequency of backwardation, 
+and combining these metrics into a final table. 
+"""
 
 import warnings
 warnings.filterwarnings("ignore")
@@ -18,11 +22,15 @@ OUTPUT_DIR = config.OUTPUT_DIR
 
 def compute_num_observations(prep_df):
     """
-    Inputs:
-    
-    Output:
+    Calculates the number of observations per commodity.
 
+    Parameters:
+        prep_df (DataFrame): Preprocessed DataFrame containing commodity data.
+        
+    Returns:
+        Series: A Series containing the average number of observations per month for each commodity.
     """
+        
     df = prep_df
     df.reset_index(inplace=True)
     total_cmdty_obs = df.groupby(['Commodity'])['Date'].count()
@@ -34,11 +42,15 @@ def compute_num_observations(prep_df):
 
 def compute_commodity_excess_returns(prep_df):
     """
-    Inputs:
-    
-    Output:
+    Computes monthly excess returns for the second contract of each commodity.
 
+    Parameters:
+        prep_df (DataFrame): Preprocessed DataFrame containing commodity data.
+        
+    Returns:
+        DataFrame: A DataFrame containing monthly excess returns for the second contract of each commodity.
     """
+
     cmdty_cntrct_2_df = prep_df[prep_df['Contract']==2]
     cmdty_cntrct_2_df.reset_index(inplace = True)
     max_date_px_last_cntrct_2 = cmdty_cntrct_2_df.groupby(['Commodity', 'YearMonth']).apply(
@@ -51,15 +63,16 @@ def compute_commodity_excess_returns(prep_df):
 
 def compute_performance_metrics(excess_returns_df, annualizing_period = 12):
     """
-    Inputs:
-        1. DataFrame of Historical Excess Returns
-        2. Annualizing Period, default value set to 12 (Convert Monthly to Yearly)
-    
-    Output:DataFrame for Performance Metrics: 
-                    1. Annualized Mean, 
-                    2. Annualized Vol, 
-                    3. Annualized Sharpe Ratio
+    Computes annualized performance metrics for commodities based on excess returns.
+
+    Parameters:
+        excess_returns_df (DataFrame): DataFrame containing monthly excess returns for commodities.
+        annualizing_factor (int): Factor used to annualize the metrics, default is 12 (for monthly data).
+        
+    Returns:
+        DataFrame: A DataFrame containing annualized mean, volatility, and Sharpe ratio for each commodity.
     """
+
     avg_hist_excess_returns = excess_returns_df.mean() * annualizing_period * 100
     std_hist_excess_returns = excess_returns_df.std() * np.sqrt(annualizing_period) * 100
     sharpe_ratio = avg_hist_excess_returns/std_hist_excess_returns
@@ -69,13 +82,18 @@ def compute_performance_metrics(excess_returns_df, annualizing_period = 12):
     return performance_metrics
 
 def get_first_last_to_expire_contract(prep_df, first_to_exp_ind = 1, last_to_expire = False):
-    
     """
-    Inputs:
-    
-    Output:
+    Retrieves close prices for the first and last to expire contracts for each commodity.
 
+    Parameters:
+        prep_df (DataFrame): Preprocessed DataFrame containing commodity data.
+        first_to_expire_index (int): Index of the contract considered as 'first to expire'.
+        last_to_expire (bool): Flag indicating whether to return last to expire contracts.
+        
+    Returns:
+        DataFrame: A DataFrame containing close prices for the specified contracts.
     """
+
     cmdty_df = prep_df
     
     #Get Commodities which have more than 1 contracts against the same date
@@ -120,11 +138,15 @@ def get_first_last_to_expire_contract(prep_df, first_to_exp_ind = 1, last_to_exp
 
 def compute_basis_timeseries(prep_df):
     """
-    Inputs:
-    
-    Output:
+    Computes the basis time series for commodities.
 
+    Parameters:
+        prep_df (DataFrame): Preprocessed DataFrame containing commodity data.
+        
+    Returns:
+        DataFrame: A DataFrame containing the basis time series for each commodity.
     """
+
     prep_df = prep_df
     first_to_expire = get_first_last_to_expire_contract(prep_df, 1, False)
     first_to_expire['uid'] = first_to_expire['Commodity'] + first_to_expire['Date'].astype(str)
@@ -146,11 +168,15 @@ def compute_basis_timeseries(prep_df):
 
 def compute_basis_mean(prep_df):
     """
-    Inputs:
-    
-    Output:
+    Computes the mean basis for each commodity.
 
+    Parameters:
+        prep_df (DataFrame): Preprocessed DataFrame containing commodity data.
+        
+    Returns:
+        Series: A Series containing the mean basis for each commodity.
     """
+
     prep_df = prep_df
     timeseries_basis = compute_basis_timeseries(prep_df)
     mean_basis = timeseries_basis.groupby(['Commodity'])['Basis'].mean()
@@ -158,11 +184,15 @@ def compute_basis_mean(prep_df):
 
 def compute_freq_backwardation(prep_df):
     """
-    Inputs:
-    
-    Output:
+    Computes the frequency of backwardation for each commodity.
 
+    Parameters:
+        prep_df (DataFrame): Preprocessed DataFrame containing commodity data.
+        
+    Returns:
+        DataFrame: A DataFrame containing the frequency of backwardation for each commodity.
     """
+
     prep_df=prep_df
     timeseries_basis = compute_basis_timeseries(prep_df)
     timeseries_basis['in_backwardation'] = timeseries_basis['Basis'].apply(lambda x: 1 if x > 0 else 0)
@@ -182,11 +212,15 @@ def compute_freq_backwardation(prep_df):
 
 def combine_metrics(prep_df):
     """
-    Inputs:
-    
-    Output:
+    Combines computed metrics into a single DataFrame.
 
+    Parameters:
+        prep_df (DataFrame): Preprocessed DataFrame containing commodity data.
+        
+    Returns:
+        DataFrame: A DataFrame containing combined metrics for each commodity.
     """
+
     prep_df = prep_df
     N = compute_num_observations(prep_df)
     returns_df = compute_commodity_excess_returns(prep_df)
@@ -215,6 +249,18 @@ def combine_metrics(prep_df):
     metrics_df_final = metrics_df[['Sector','Commodity','Symbol','N','Basis','Freq. of Backwardation','Ann. Excess Returns','Ann. Volatility','Ann. Sharpe Ratio']]
     metrics_df_final.set_index(['Sector','Commodity'], inplace = True)
     metrics_df_final.sort_index(inplace=True)
+
+    metrics_df_final = metrics_df_final.rename(columns={'Freq. of Backwardation': 'Freq. of bw.', 'Ann. Excess Returns': 'Excess returns', 
+                                                   'Ann. Volatility': 'Volatility', 'Ann. Sharpe Ratio': 'Sharpe ratio'})
+    metrics_df_final['N'] = metrics_df_final['N'].astype(int)
+
+    metrics_df_final = metrics_df_final.style.format({
+        'Basis': "{:.2f}",
+        'Freq. of bw.': "{:.2f}",
+        'Excess returns': "{:.2f}",
+        'Volatility': "{:.2f}",
+        'Share ratio': "{:.2f}"
+    })
     
     return metrics_df_final
 
