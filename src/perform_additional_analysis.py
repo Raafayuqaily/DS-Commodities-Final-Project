@@ -1,3 +1,10 @@
+"""
+This module contains functions for visualizing commodity data in various forms including
+sector distribution, data availability, contract numbers, and time series analysis. It is
+designed to assist in the analysis and presentation of commodities data by generating
+informative plots.
+"""
+
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
@@ -227,4 +234,3 @@ if __name__ == '__main__':
     com_time_ser = plot_commodity_time_series(df, OUTPUT_DIR)
     rolling_vol = plot_rolling_volatility(df, OUTPUT_DIR)
     rolling_sharpe = plot_rolling_sharpe_ratio(df, OUTPUT_DIR)
-
