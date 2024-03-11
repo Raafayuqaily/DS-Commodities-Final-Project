@@ -259,7 +259,7 @@ def combine_metrics(prep_df):
         'Freq. of bw.': "{:.2f}",
         'Excess returns': "{:.2f}",
         'Volatility': "{:.2f}",
-        'Share ratio': "{:.2f}"
+        'Sharpe ratio': "{:.2f}"
     })
     
     return metrics_df_final
