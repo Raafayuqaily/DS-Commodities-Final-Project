@@ -14,7 +14,7 @@ import load_commodities_data
 
 DATA_DIR = config.DATA_DIR
 INPUTFILE = config.INPUTFILE
-
+BASE_DIR = Path(__file__).resolve().parent.parent
 
 def test_load_commodities_data_functionality():
     """
