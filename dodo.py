@@ -53,18 +53,6 @@ def get_os():
 os_type = get_os()
 
 
-# def copy_notebook_to_folder(notebook_stem, origin_folder, destination_folder):
-#     origin_path = Path(origin_folder) / f"{notebook_stem}.ipynb"
-#     destination_folder = Path(destination_folder)
-#     destination_folder.mkdir(parents=True, exist_ok=True)
-#     destination_path = destination_folder / f"_{notebook_stem}.ipynb"
-#     if os_type == "nix":
-#         command = f"cp {origin_path} {destination_path}"
-#     else:
-#         command = f"copy  {origin_path} {destination_path}"
-#     return command
-
-
 def task_data_preprocessing():
     """Task to preprocess data"""
 
@@ -162,86 +150,26 @@ def task_additional_analysis():
         "clean":True
         }
 
+def task_compile_latex_docs():
+    """Compile the LaTex documents to PDFs
+    Outputs:
+        PDFs in Reports
+    """
+    file_dep = [
+        "./reports/report_simple_example.tex",
+    ]
 
-# # Function to run tests
-# def run_tests():
-#     test_files = [
-#         'src/test_load_commodities_data.py',
-#         'src/test_data_preprocessing.py',
-#         'src/test_replicate_results.py',
-#         'src/test_perform_additional_analysis.py',
-#     ]
-#     for test_file in test_files:
-#         subprocess.run(['python', test_file], check=True)
+    file_output = [
+         "./reports/report_simple_example.pdf"
+    ]
+    targets = [file for file in file_output]
 
-# # Define a doit task for running tests
-# def task_run_tests():
-#     return {
-#         'actions': [run_tests],
-#     }
-
-
-# def task_summary_stats():
-#     """ """
-#     file_dep = ["./src/example_table.py"]
-#     file_output = [
-#         "example_table.tex",
-#         "pandas_to_latex_simple_table1.tex",
-#     ]
-#     targets = [OUTPUT_DIR / file for file in file_output]
-
-#     return {
-#         "actions": [
-#             "ipython ./src/example_table.py",
-#             "ipython ./src/pandas_to_latex_demo.py",
-#         ],
-#         "targets": targets,
-#         "file_dep": file_dep,
-#         "clean": True,
-#     }
-
-
-# def task_example_plot():
-#     """Example plots"""
-#     file_dep = [Path("./src") / file for file in ["example_plot.py", "load_fred.py"]]
-#     file_output = ["example_plot.png"]
-#     targets = [OUTPUT_DIR / file for file in file_output]
-
-#     return {
-#         "actions": [
-#             "ipython ./src/example_plot.py",
-#         ],
-#         "targets": targets,
-#         "file_dep": file_dep,
-#         "clean": True,
-#     }
-
-
-
-
-# def task_compile_latex_docs():
-#     """Compile the LaTeX documents to PDFs"""
-#     file_dep = [
-#         "./reports/report_example.tex",
-#         "./reports/slides_example.tex",
-#         "./src/example_plot.py",
-#         "./src/example_table.py",
-#     ]
-#     file_output = [
-#         "./reports/report_example.pdf",
-#         "./reports/slides_example.pdf",
-#     ]
-#     targets = [file for file in file_output]
-
-#     return {
-#         "actions": [
-#             "latexmk -xelatex -cd ./reports/report_example.tex",  # Compile
-#             "latexmk -xelatex -c -cd ./reports/report_example.tex",  # Clean
-#             "latexmk -xelatex -cd ./reports/slides_example.tex",  # Compile
-#             "latexmk -xelatex -c -cd ./reports/slides_example.tex",  # Clean
-#             # "latexmk -CA -cd ../reports/",
-#         ],
-#         "targets": targets,
-#         "file_dep": file_dep,
-#         "clean": True,
-#     }
+    return {
+        "actions": [
+            "latexmk -xelatex -cd ./reports/report_simple_example.tex",  # Compile
+            "latexmk -xelatex -c -cd ./reports/report_simple_example.tex",  # Clean
+        ],
+        "targets": targets,
+        "file_dep": file_dep,
+        "clean": True,
+    }
