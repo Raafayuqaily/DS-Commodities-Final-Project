@@ -17,6 +17,9 @@ DATA_DIR = config.DATA_DIR
 INPUTFILE = config.INPUTFILE
 
 def generate_latex_table(metrics_df_final, output_table_name):
+    """
+    Converts a pandas DataFrame into a LaTeX table and saves it as a .tex file.
+    """
 
     try:
         # Convert the DataFrame to a LaTeX string
