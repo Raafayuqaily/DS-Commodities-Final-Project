@@ -156,18 +156,18 @@ def task_compile_latex_docs():
         PDFs in Reports
     """
     file_dep = [
-        "./reports/final_report.tex",
+        "./reports/project_pdf.tex",
     ]
 
     file_output = [
-         "./reports/final_report.pdf"
+         "./reports/project_pdf.pdf"
     ]
     targets = [file for file in file_output]
 
     return {
         "actions": [
-            "latexmk -xelatex -cd ./reports/final_report.tex",  # Compile
-            "latexmk -xelatex -c -cd ./reports/final_report.tex",  # Clean
+            "latexmk -xelatex -cd ./reports/project_pdf.tex",  # Compile
+            "latexmk -xelatex -c -cd ./reports/project_pdf.tex",  # Clean
         ],
         "targets": targets,
         "file_dep": file_dep,
