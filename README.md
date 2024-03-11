@@ -3,7 +3,7 @@ Investment shocks and the commodity basis spread
 ==================
 
 # About this project
-The main goal of this project is to build an automated engine that reproduces the analytical findings in Table 1 of the study, Investment shocks and the commodity basis spread by Fan Yang. Our team has put has not only replicated the finding for the time period `start_date` and `end_date` but also has produced the same findings uptil `month_day_2024`.
+[He, 2017] is a well-known paper that examines the effects that intermediaries' balance sheets have on asset prices. While this paper happens to test this theory on a variety of asset classes, for this project, we replicated the test asset returns across the commodities asset class referencing [Yang, 2013]. Specifically, we were tasked with replicating table 1, which included the summary statistics of commodity futures for every individual commodity in the sample.
 
 ## Data Gathering Approach
 While gathering data for the project, we ran into several challenges and made certain assumptions to make progress. Those challenges and assumptions can be found in the `docs` folder. Please note that we have used Bloomberg as the source to pull the data.
