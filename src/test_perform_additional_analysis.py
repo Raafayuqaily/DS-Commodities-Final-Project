@@ -1,3 +1,8 @@
+"""
+This module is designed to perform unit tests on functions within the perform_additional_analysis module.
+Each function is tested to ensure that it properly generates and saves the expected plots based on the commodity data provided.
+"""
+
 import os
 import pytest
 import pandas as pd
@@ -17,6 +22,10 @@ ENDDATE = config.ENDDATE_OLD
 
 
 def test_plot_commodities_by_sector():
+    """
+    Tests the plot_commodities_by_sector function to ensure it creates and saves the plot successfully.
+    """
+
     df = lcd.load_data(DATA_DIR)  # Make sure this returns the expected DataFrame
     # Now using clean_process_data
     df = dp.clean_process_data(start_date=config.STARTDATE_OLD, end_date=config.ENDDATE_OLD, data_dir=DATA_DIR, input_file=INPUTFILE)
@@ -27,6 +36,10 @@ def test_plot_commodities_by_sector():
 
 
 def test_plot_data_availability():
+    """
+    Tests the plot_data_availability function to ensure it creates and saves the plot successfully.
+    """
+
     df = lcd.load_data(DATA_DIR)
     df = dp.clean_process_data(start_date=config.STARTDATE_OLD, end_date=config.ENDDATE_OLD, data_dir=DATA_DIR)
     output_dir = Path(config.OUTPUT_DIR)
@@ -34,6 +47,10 @@ def test_plot_data_availability():
     assert (output_dir / "data_availability_heatmap.png").is_file()
 
 def test_plot_max_contract_number():
+    """
+    Tests the plot_max_contract_number function to ensure it creates and saves the plot successfully.
+    """
+
     df = lcd.load_data(DATA_DIR)
     df = dp.clean_process_data(start_date=config.STARTDATE_OLD, end_date=config.ENDDATE_OLD, data_dir=DATA_DIR)
     output_dir = Path(config.OUTPUT_DIR)
@@ -41,6 +58,10 @@ def test_plot_max_contract_number():
     assert (output_dir / "maximum_contract_number.png").is_file()
 
 def test_plot_max_contract_availability():
+    """
+    Tests the plot_max_contract_availability function to ensure it creates and saves the plot successfully.
+    """
+
     df = lcd.load_data(DATA_DIR)
     df = dp.clean_process_data(start_date=config.STARTDATE_OLD, end_date=config.ENDDATE_OLD, data_dir=DATA_DIR)
     output_dir = Path(config.OUTPUT_DIR)
@@ -48,6 +69,10 @@ def test_plot_max_contract_availability():
     assert (output_dir / "max_contract_availability.png").is_file()
 
 def test_plot_commodity_time_series():
+    """
+    Tests the plot_commodity_time_series function to ensure it creates and saves the plot successfully for a given commodity.
+    """
+
     df = lcd.load_data(DATA_DIR)
     df = dp.clean_process_data(start_date=config.STARTDATE_OLD, end_date=config.ENDDATE_OLD, data_dir=DATA_DIR)
     output_dir = Path(config.OUTPUT_DIR)
@@ -56,6 +81,10 @@ def test_plot_commodity_time_series():
     assert (output_dir / f"{commodity}_futures_contracts_time_series.png").is_file()
 
 def test_plot_rolling_volatility():
+    """
+    Tests the plot_rolling_volatility function to ensure it creates and saves the plot successfully based on specified rolling window and contract number.
+    """
+    
     df = lcd.load_data(DATA_DIR)
     df = dp.clean_process_data(start_date=config.STARTDATE_OLD, end_date=config.ENDDATE_OLD, data_dir=DATA_DIR)
     output_dir = Path(config.OUTPUT_DIR)
