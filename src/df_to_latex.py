@@ -1,4 +1,8 @@
-# This python file is designed to convert a pandas dataframe into a latex file
+"""
+The main purpose of this file is to convert DataFrame metrics from commodity analysis
+into LaTeX format for inclusion in documents or reports. The resulting LaTeX tables
+are stored in a specified output directory.
+"""
 
 from pathlib import Path
 import pandas as pd
