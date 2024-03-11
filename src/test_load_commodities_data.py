@@ -57,3 +57,6 @@ def test_load_commodities_data_completedness():
 
     # Test if the unique number of commodities is greater than or equal to 30
     assert df['Commodity'].nunique() >= 25
+
+if __name__ == "__main__":
+    pytest.main()
