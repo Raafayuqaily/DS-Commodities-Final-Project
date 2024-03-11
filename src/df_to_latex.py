@@ -8,8 +8,7 @@ from pathlib import Path
 import pandas as pd
 import logging
 import config
-import replicate_results  
-logging.basicConfig(level=logging.INFO)
+import replicate_results
 logging.basicConfig(level=logging.INFO, format='%(message)s')
 
 
@@ -21,7 +20,7 @@ def generate_latex_table(metrics_df_final, output_table_name):
 
     try:
         # Convert the DataFrame to a LaTeX string
-        latex_table_string = metrics_df_final.to_latex(index=True, float_format="%.2f")
+        latex_table_string = metrics_df_final.to_latex()
 
         # Write the LaTeX string to a file in the OUTPUT_DIR
         output_file_path = OUTPUT_DIR / f'{output_table_name}.tex'
