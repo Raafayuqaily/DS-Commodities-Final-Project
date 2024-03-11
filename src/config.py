@@ -1,4 +1,5 @@
-"""Load project configurations from .env files.
+"""
+Load project configurations from .env files.
 Provides easy access to paths and credentials used in the project.
 Meant to be used as an imported module.
 
@@ -15,8 +16,8 @@ You can have different sets of variables for difference instances,
 such as `.env.development` or `.env.production`. You would only
 need to copy over the settings from one into `.env` to switch
 over to the other configuration, for example.
-
 """
+
 from decouple import config
 from pathlib import Path
 import os
