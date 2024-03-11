@@ -1,5 +1,8 @@
-# This python file is designed to Preprocess the loaded data
-# Preprocessing includes checking variable data types and sorting the data
+"""
+Preprocessing tasks include verification of variable data types, renaming columns for consistency, 
+sorting data by date and commodity, and filtering based on predefined criteria. The module aims to prepare 
+the raw data into a format suitable for further analysis.
+"""
 
 import warnings
 warnings.filterwarnings("ignore")
@@ -15,7 +18,6 @@ DATA_DIR = config.DATA_DIR
 INPUTFILE = config.INPUTFILE
 STARTDATE = config.STARTDATE_OLD
 ENDDATE = config.ENDDATE_OLD
-
 
 def clean_process_data(start_date = STARTDATE, end_date = ENDDATE, data_dir = DATA_DIR, input_file = INPUTFILE):
     """
