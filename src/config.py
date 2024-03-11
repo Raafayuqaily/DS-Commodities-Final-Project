@@ -26,6 +26,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 DATA_DIR = (BASE_DIR / config('DATA_DIR', default=Path('data'), cast=Path)).resolve()
 OUTPUT_DIR = (BASE_DIR / config('OUTPUT_DIR', default=Path('output'), cast=Path)).resolve()
+REPORTS_DIR = (BASE_DIR / config('REPORTS_DIR', default=Path('reports'), cast=Path)).resolve()
 LOADBACKPATH_CLEAN = Path(DATA_DIR / "manual")
 
 INPUTFILE = 'commodities_data.csv'

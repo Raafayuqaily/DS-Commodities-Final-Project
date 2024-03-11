@@ -27,10 +27,10 @@ STARTDATE = config.STARTDATE_OLD
 ENDDATE = config.ENDDATE_OLD
 LOADBACKPATH_CLEAN = config.LOADBACKPATH_CLEAN
 
-clean_data_file_path_1970 = Path(DATA_DIR) / "manual"/"clean_1970_2008_commodities_data.csv"
-df = pd.read_csv(clean_data_file_path_1970)
+#clean_data_file_path_1970 = Path(DATA_DIR) / "manual"/"clean_1970_2008_commodities_data.csv"
+#df = pd.read_csv(clean_data_file_path_1970)
 
-def plot_commodities_by_sector(df, OUTPUT_DIR):
+def plot_commodities_by_sector(df, OUTPUT_DIR, start_date = STARTDATE):
     '''
     This function plots the number of commodities in each sector and stores the plot as a .png file in the output directory.
     '''
@@ -54,11 +54,11 @@ def plot_commodities_by_sector(df, OUTPUT_DIR):
     plt.xlabel('Sector')
 
     # Save the plot
-    file_path = Path(OUTPUT_DIR) / "commodities_by_sector.png"
+    file_path = Path(OUTPUT_DIR) / f"commodities_by_sector_{start_date}.png"
     plt.savefig(file_path)
     plt.close()
     
-def plot_data_availability(df, OUTPUT_DIR):
+def plot_data_availability(df, OUTPUT_DIR, start_date = STARTDATE):
     '''
     This function creates a heatmap showing the availability of data for each commodity across different contracts
     and saves the plot as a .png file in the output directory.
@@ -83,11 +83,11 @@ def plot_data_availability(df, OUTPUT_DIR):
     plt.ylabel('Commodity')
 
     # Save the plot
-    file_path = Path(OUTPUT_DIR) / "data_availability_heatmap.png"
+    file_path = Path(OUTPUT_DIR) / f"data_availability_heatmap_{start_date}.png"
     plt.savefig(file_path)
     plt.close()
     
-def plot_max_contract_number(df, OUTPUT_DIR):
+def plot_max_contract_number(df, OUTPUT_DIR, start_date = STARTDATE):
     '''
     This function plots the maximum contract number available for each commodity and stores the plot as a .png file in the output directory.
     '''
@@ -100,11 +100,11 @@ def plot_max_contract_number(df, OUTPUT_DIR):
     plt.ylabel('Maximum Contract #')
     
     # Save the plot
-    file_path = Path(OUTPUT_DIR) / "maximum_contract_number.png"
+    file_path = Path(OUTPUT_DIR) / f"maximum_contract_number_{start_date}.png"
     plt.savefig(file_path)
     plt.close()
     
-def plot_max_contract_availability(df, OUTPUT_DIR):
+def plot_max_contract_availability(df, OUTPUT_DIR, start_date = STARTDATE):
     '''
     This function creates a grid of plots showing the maximum contract availability at month-end for each commodity
     and stores the figure as a .png file in the output directory.
@@ -148,11 +148,11 @@ def plot_max_contract_availability(df, OUTPUT_DIR):
     plt.tight_layout()
 
     # Save the figure
-    file_path = Path(OUTPUT_DIR) / "max_contract_availability.png"
+    file_path = Path(OUTPUT_DIR) / f"max_contract_availability_{start_date}.png"
     fig.savefig(file_path)
     plt.close()
     
-def plot_commodity_time_series(df, OUTPUT_DIR, commodity = 'Aluminium'):
+def plot_commodity_time_series(df, OUTPUT_DIR, commodity = 'Aluminium', start_date = STARTDATE):
     '''
     This function creates a time series plot for the specified commodity's futures contracts
     and stores the plot as a .png file in the output directory.
@@ -175,11 +175,11 @@ def plot_commodity_time_series(df, OUTPUT_DIR, commodity = 'Aluminium'):
     plt.legend()
 
     # Save the plot
-    file_path = Path(OUTPUT_DIR) / f"{commodity}_futures_contracts_time_series.png"
+    file_path = Path(OUTPUT_DIR) / f"{commodity}_futures_contracts_time_series_{start_date}.png"
     plt.savefig(file_path)
     plt.close()
 
-def plot_rolling_volatility(df, OUTPUT_DIR, rolling_window=60, contract_num=2):
+def plot_rolling_volatility(df, OUTPUT_DIR, rolling_window=60, contract_num=2, start_date=STARTDATE):
     '''
     This function creates a plot showing the 5-year rolling volatility (annualized) and stores the plot as a .png file in the output directory.
     '''
@@ -197,11 +197,11 @@ def plot_rolling_volatility(df, OUTPUT_DIR, rolling_window=60, contract_num=2):
     plt.ylabel('Rolling Volatility')
 
     # Save the plot
-    file_path = Path(OUTPUT_DIR) / f"{rolling_window}_months_rolling_volatility.png"
+    file_path = Path(OUTPUT_DIR) / f"{rolling_window}_months_rolling_volatility_{start_date}.png"
     plt.savefig(file_path)
     plt.close()
     
-def plot_rolling_sharpe_ratio(df, OUTPUT_DIR, rolling_window=60, contract_num =2):
+def plot_rolling_sharpe_ratio(df, OUTPUT_DIR, rolling_window=60, contract_num =2, start_date = STARTDATE):
     '''
     This function creates a plot showing the rolling Sharpe ratio and stores the plot as a .png file in the output directory.
     '''
@@ -221,16 +221,24 @@ def plot_rolling_sharpe_ratio(df, OUTPUT_DIR, rolling_window=60, contract_num =2
     plt.ylabel('Rolling Sharpe Ratio')
 
     # Save the plot
-    file_path = Path(OUTPUT_DIR) / f"{rolling_window}_months_rolling_sharpe_ratio.png"
+    file_path = Path(OUTPUT_DIR) / f"{rolling_window}_months_rolling_sharpe_ratio_{start_date}.png"
     plt.savefig(file_path)
     plt.close()
 
 
 if __name__ == '__main__':
-    com_sec = plot_commodities_by_sector(df, OUTPUT_DIR)
-    data_ava = plot_data_availability(df, OUTPUT_DIR)
-    max_contract_num = plot_max_contract_number(df, OUTPUT_DIR)
-    max_contract_ava = plot_max_contract_availability(df, OUTPUT_DIR)
-    com_time_ser = plot_commodity_time_series(df, OUTPUT_DIR)
-    rolling_vol = plot_rolling_volatility(df, OUTPUT_DIR)
-    rolling_sharpe = plot_rolling_sharpe_ratio(df, OUTPUT_DIR)
+    start_dates = [config.STARTDATE_OLD, config.STARTDATE_NEW]
+    end_dates = [config.ENDDATE_OLD, config.ENDDATE_NEW]
+
+    for start_date, end_date in zip(start_dates, end_dates):
+
+        clean_data_file_path = Path(DATA_DIR) / "manual" / f"clean_{start_date[:4]}_{end_date[:4]}_{INPUTFILE}"
+        df = pd.read_csv(clean_data_file_path)
+
+        plot_commodities_by_sector(df, OUTPUT_DIR, start_date)
+        plot_data_availability(df, OUTPUT_DIR, start_date)
+        plot_max_contract_number(df, OUTPUT_DIR, start_date)
+        plot_max_contract_availability(df, OUTPUT_DIR, start_date)
+        plot_commodity_time_series(df, OUTPUT_DIR, start_date)
+        plot_rolling_volatility(df, OUTPUT_DIR, rolling_window=60, contract_num=2, start_date=start_date)
+        plot_rolling_sharpe_ratio(df, OUTPUT_DIR, rolling_window=60, contract_num=2, start_date=start_date)
