@@ -151,33 +151,6 @@ def plot_max_contract_availability(df, OUTPUT_DIR, start_date = STARTDATE):
     file_path = Path(OUTPUT_DIR) / f"max_contract_availability_{start_date}.png"
     fig.savefig(file_path)
     plt.close()
-    
-def plot_commodity_time_series(df, OUTPUT_DIR, commodity = 'Aluminium', start_date = STARTDATE):
-    '''
-    This function creates a time series plot for the specified commodity's futures contracts
-    and stores the plot as a .png file in the output directory.
-    '''
-    # Filter the DataFrame for the selected commodity
-    
-    df_select = df[df['Commodity'] == commodity]
-    unique_contracts = df_select['Contract'].unique()
-
-    # Create the time series plot
-    plt.figure(figsize=(14, 7))
-    for contract in unique_contracts:
-        contract_data = df_select[df_select['Contract'] == contract]
-        plt.plot(contract_data.index, contract_data['ClosePrice'], label=f'Contract {contract}')
-
-    plt.yscale('log')
-    plt.title(f'{commodity} Futures Contracts Time Series')
-    plt.xlabel('Date')
-    plt.ylabel('Close Price (log scale)')
-    plt.legend()
-
-    # Save the plot
-    file_path = Path(OUTPUT_DIR) / f"{commodity}_futures_contracts_time_series_{start_date}.png"
-    plt.savefig(file_path)
-    plt.close()
 
 def plot_rolling_volatility(df, OUTPUT_DIR, rolling_window=60, contract_num=2, start_date=STARTDATE):
     '''
@@ -239,6 +212,5 @@ if __name__ == '__main__':
         plot_data_availability(df, OUTPUT_DIR, start_date)
         plot_max_contract_number(df, OUTPUT_DIR, start_date)
         plot_max_contract_availability(df, OUTPUT_DIR, start_date)
-        plot_commodity_time_series(df, OUTPUT_DIR, start_date)
         plot_rolling_volatility(df, OUTPUT_DIR, rolling_window=60, contract_num=2, start_date=start_date)
         plot_rolling_sharpe_ratio(df, OUTPUT_DIR, rolling_window=60, contract_num=2, start_date=start_date)

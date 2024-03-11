@@ -32,7 +32,7 @@ def test_plot_commodities_by_sector():
     output_dir = Path(config.OUTPUT_DIR)
     
     paa.plot_commodities_by_sector(df, output_dir)
-    assert (output_dir / "commodities_by_sector.png").is_file()
+    assert (output_dir / f"commodities_by_sector_{STARTDATE}.png").is_file()
 
 
 def test_plot_data_availability():
@@ -44,7 +44,7 @@ def test_plot_data_availability():
     df = dp.clean_process_data(start_date=config.STARTDATE_OLD, end_date=config.ENDDATE_OLD, data_dir=DATA_DIR)
     output_dir = Path(config.OUTPUT_DIR)
     paa.plot_data_availability(df, output_dir)
-    assert (output_dir / "data_availability_heatmap.png").is_file()
+    assert (output_dir / f"data_availability_heatmap_{STARTDATE}.png").is_file()
 
 def test_plot_max_contract_number():
     """
@@ -55,7 +55,7 @@ def test_plot_max_contract_number():
     df = dp.clean_process_data(start_date=config.STARTDATE_OLD, end_date=config.ENDDATE_OLD, data_dir=DATA_DIR)
     output_dir = Path(config.OUTPUT_DIR)
     paa.plot_max_contract_number(df, output_dir)
-    assert (output_dir / "maximum_contract_number.png").is_file()
+    assert (output_dir / f"maximum_contract_number_{STARTDATE}.png").is_file()
 
 def test_plot_max_contract_availability():
     """
@@ -66,19 +66,7 @@ def test_plot_max_contract_availability():
     df = dp.clean_process_data(start_date=config.STARTDATE_OLD, end_date=config.ENDDATE_OLD, data_dir=DATA_DIR)
     output_dir = Path(config.OUTPUT_DIR)
     paa.plot_max_contract_availability(df, output_dir)
-    assert (output_dir / "max_contract_availability.png").is_file()
-
-def test_plot_commodity_time_series():
-    """
-    Tests the plot_commodity_time_series function to ensure it creates and saves the plot successfully for a given commodity.
-    """
-
-    df = lcd.load_data(DATA_DIR)
-    df = dp.clean_process_data(start_date=config.STARTDATE_OLD, end_date=config.ENDDATE_OLD, data_dir=DATA_DIR)
-    output_dir = Path(config.OUTPUT_DIR)
-    commodity = 'Aluminium'  # Example, change as needed
-    paa.plot_commodity_time_series(df, output_dir, commodity=commodity)
-    assert (output_dir / f"{commodity}_futures_contracts_time_series.png").is_file()
+    assert (output_dir / f"max_contract_availability_{STARTDATE}.png").is_file()
 
 def test_plot_rolling_volatility():
     """
@@ -91,7 +79,7 @@ def test_plot_rolling_volatility():
     rolling_window = 60  # Specify the rolling window for this test
     contract_num = 1  # Specify the contract number for this test
     paa.plot_rolling_volatility(df, output_dir, rolling_window=rolling_window, contract_num=contract_num)
-    assert (output_dir / f"{rolling_window}_months_rolling_volatility.png").is_file()
+    assert (output_dir / f"{rolling_window}_months_rolling_volatility_{STARTDATE}.png").is_file()
 
 if __name__ == '__main__':
     pytest.main()

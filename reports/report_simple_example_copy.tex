@@ -1,0 +1,218 @@
+\documentclass{article}
+\usepackage{graphicx} % Required for inserting images
+\usepackage{amsmath}
+\usepackage{float}
+\usepackage{pdflscape}
+\usepackage{subfigure}
+\usepackage{caption}
+\usepackage{subcaption}
+\usepackage{caption}
+\setlength{\abovecaptionskip}{0pt}
+\usepackage{rotating}
+\usepackage{booktabs} 
+\usepackage{adjustbox}
+\usepackage{siunitx} 
+\usepackage{graphicx} 
+\usepackage{pdflscape} 
+\usepackage[a4paper, margin=1in]{geometry} 
+\usepackage{natbib} 
+
+\title{Investment Shocks \& the Commodity Basis Spread}
+\author{Yasmine Ouattara, Raafay Uqaily, Kaleem Bukhari, Aditya Murarka}
+\date{March 8, 2024} 
+
+\begin{document}
+
+\maketitle
+\section{Abstract}
+
+In this study, we sought to replicate the findings presented in Table 1 of Yang (2013), which analyzes the impact of investment shocks on commodity basis spreads. By extracting and processing commodity futures data, we conducted a thorough examination to validate the initial outcomes. We executed a replication effort, anchored by a comprehensive data pre-processing phase and extensive analysis. The replication process and our methodology are fully documented and accessible in our GitHub repository.
+
+\section{Introduction}
+
+\cite{ref1} is a well-known paper that examines the effects that intermediaries' balance sheets have on asset prices. While this paper happens to test this theory on a variety of asset classes, for this project, we replicated the test asset returns across the commodities asset class referencing \cite{ref2}. Specifically, we were tasked with replicating table 1, which included the summary statistics of commodity futures for every individual commodity in the sample.
+
+\section{Literature Review}
+\subsection{Intermediary Asset Pricing: New Evidence from Many Asset Classes}
+
+Financial intermediaries play an essential role in determining asset prices, as highlighted by this paper. The study focuses on the equity capital ratios of financial intermediaries, especially primary dealers who have direct transactions with the Federal Reserve, and their significant correlation with the expected returns on various investments. These investments span across equities, government and corporate bonds, sovereign bonds, derivatives, commodities, and currencies. The paper reveals that fluctuations in the capital ratios of these intermediaries can account for the cross-sectional variations in expected returns, indicating that financial intermediaries, through their capital allocations, serve as critical marginal investors across multiple markets.
+
+The research findings emphasize the importance of intermediary asset pricing in understanding the dynamics of asset returns. It brings to light the fluctuation of intermediary capital risk and its consistent impact on pricing across different asset classes. Such evidence suggests a comprehensive view of the financial system, where the health and behavior of intermediaries are central to asset pricing and market stability. The study goes beyond traditional asset pricing models by incorporating the financial condition of intermediaries into the evaluation of expected returns, offering new insights into the mechanisms driving asset prices in various markets.
+
+\subsection{Investment Shocks and the Commodity Basis Spread}
+
+This paper presents an empirical analysis of the returns on commodity futures and develops a theoretical framework to understand the macroeconomic risks that justify the observed cross-sectional returns. Yang identifies a significant "basis spread" in the commodity futures market, where futures contracts written on commodities with a high basis (i.e., a high ratio of spot price to futures price) tend to have higher expected returns compared to those written on commodities with a low basis. Yang's empirical findings confirm that long positions in high-basis commodities offer significantly higher annual excess returns, around 10\% compared to low-basis commodities, highlighting the importance of the basis as a predictor of futures returns.
+
+To provide a theoretical foundation for these empirical results, Yang proposes an investment-based asset pricing model in which the sensitivity of commodities to investment shocks, which represent technological advancements in producing new capital, is a central feature. Investment shocks are associated with a negative price of risk, which helps explain the observed positive basis spread.
+
+Yang's model illustrates that commodities with high demand induce greater investment from producers, who then become more sensitive to investment shocks compared to producers of lower-demand commodities. This sensitivity, quantified as futures betas to investment shocks, implies that high-demand commodities (associated with high-basis futures) offer higher futures returns due to their greater exposure to negative investment shocks. The model successfully captures the cross-sectional futures returns and the negative correlation between investment shocks and the slope factor (the return spread between high- and low-basis portfolios).
+
+\subsection{The Fundamentals of Commodity Futures Returns}
+
+Commodity futures risk premiums vary across commodities and over time depending on the level of physical inventories. Additionally, price measures, such as the futures basis reflect the state of inventories and are informative about commodity futures risk premiums. The paper verified these theoretical predictions using a comprehensive data set on 31 commodity futures and physical inventories between 1971 and 2010, finding no evidence that the positions of participants in futures markets predict risk premiums on commodity futures.
+
+This paper was referenced by \cite{ref2} while computing basis, which was defined as the log difference between the one-month futures price and the 12-month futures price divided by the difference in maturity.
+
+\section{Table 1 Replication}
+\subsection{Paper}
+
+The goal of this project, aiming to replicate Table 1 from [2], led us to conduct some futures commodities data extraction from \textit{Bloomberg}, complete some data preprocessing, and perform exploratory data analysis further detailed in the report before applying the detailed formulas below.
+
+An important computation for the table replication was the excess returns calculation for commodity futures. The excess return of a commodity future, denoted by \( R^e_{i,t+1,T} \), is the relative change in price of the future contract over a specific time period. It is calculated using the formula:
+
+\[
+R^e_{i,t+1,T} = \frac{F_{i,t+1,T}}{F_{i,t,T}} - 1.
+\]
+
+where \( F_{i,t+1,T} \) is the price of the future contract for commodity \( i \) at time \( t+1 \) with maturity \( T \), and \( F_{i,t,T} \) is the price of the contract at time \( t \). This formula allows us to understand the return on investment over the holding period, not including any external costs or dividends.
+
+The formula below represents the calculation of the basis spread, which measures the slope of the futures curves by taking the logarithmic difference between the one-month futures price and the twelve-month futures price. The basis, denoted by \( B_{i,t} \), is defined as:
+
+\[
+B_{i,t} = \frac{\log(F_{i,t,T_1}) - \log(F_{i,t,T_2})}{T_2 - T_1}.
+\]
+
+Here, \( F_{i,t,T_1} \) and \( F_{i,t,T_2} \) are the prices of the futures contracts for commodity \( i \) at time \( t \) with maturities \( T_1 \) and \( T_2 \), respectively. \( T_2 \) is assumed to be greater than \( T_1 \), indicating that \( T_1 \) refers to the one-month future price while \( T_2 \) refers to the twelve-month future price. The basis spread can be interpreted as a normalized measure of the term structure of futures prices, which is pivotal in understanding the contango and backwardation market conditions.
+
+Continuing with our analysis, we meticulously computed several key statistics to understand the dynamics of the commodity futures for the replication of the table. The frequency of backwardation was one such statistic, revealing how often futures prices fell below the expected spot prices. Additionally, we calculated the standard deviation of excess returns to assess the volatility and risk of the commodities' returns. To evaluate the performance of these commodities relative to their risk, the Sharpe ratio was also computed. Each of these metrics plays a crucial role in the risk-return profile analysis of commodity futures, aiding in the thorough examination of market behaviors over the time span of the study.
+
+\subsection{Challenges and Successes}
+
+
+\subsection{Results}
+
+%\centering
+\begin{adjustbox}{width=\textwidth}
+2009 to 2024: \begin{tabular}{lllrrrrrr}
+\toprule
+ &  & Symbol & N & Basis & Freq. of bw. & Excess returns & Volatility & Sharpe ratio \\
+Sector & Commodity &  &  &  &  &  &  &  \\
+\midrule
+\multirow[c]{12}{*}{Agriculture} & Canola & WC & 97 & 0.12 & 83.02 & -0.73 & 19.37 & -0.037500 \\
+ & Cocoa & CC & 160 & -0.01 & 25.43 & 4.52 & 30.19 & 0.149750 \\
+ & Coffee & KC & 149 & 0.08 & 81.88 & 6.45 & 35.96 & 0.179455 \\
+ & Corn & C- & 152 & 0.30 & 99.57 & -1.10 & 24.09 & -0.045480 \\
+ & Cotton & CT & 170 & 0.07 & 78.21 & 2.07 & 23.17 & 0.089283 \\
+ & Lumber & LB & 114 & -0.01 & 31.50 & 3.71 & 24.88 & 0.148952 \\
+ & Oats & O- & 119 & -0.03 & 44.42 & 0.06 & 29.57 & 0.002160 \\
+ & Orange juice & JO & 178 & -0.05 & 23.50 & 1.55 & 30.54 & 0.050905 \\
+ & Rough rice & RR & 119 & 0.35 & 97.08 & -1.23 & 25.56 & -0.048200 \\
+ & Soybean meal & SM & 191 & -0.19 & 0.43 & 6.81 & 30.71 & 0.221827 \\
+ & Soybeans & S- & 182 & -0.01 & 34.62 & 4.53 & 27.42 & 0.165094 \\
+ & Wheat & W- & 133 & 0.45 & 98.72 & 1.75 & 24.18 & 0.072476 \\
+\multirow[c]{5}{*}{Energy} & Crude Oil & CL & 241 & 0.13 & 85.48 & 12.54 & 32.41 & 0.386810 \\
+ & Gasoline & RB & 251 & -0.09 & 0.00 & -11.35 & 40.52 & -0.280166 \\
+ & Heating Oil & HO & 246 & -0.02 & 30.37 & 12.33 & 31.85 & 0.387157 \\
+ & Natural gas & NG & 250 & 0.48 & 96.89 & 2.26 & 49.33 & 0.045903 \\
+ & Unleaded gas & HU & 198 & 0.01 & 69.64 & 9.94 & 29.24 & 0.339799 \\
+\multirow[c]{3}{*}{Livestock} & Feeder cattle & FC & 141 & 0.18 & 97.75 & 3.55 & 16.02 & 0.221308 \\
+ & Lean hogs & LH & 175 & 0.34 & 97.07 & 5.81 & 20.93 & 0.277766 \\
+ & Live cattle & LC & 136 & 0.08 & 85.47 & 5.52 & 15.81 & 0.349258 \\
+\multirow[c]{6}{*}{Metals} & Aluminium & AL & 252 & 0.05 & 100.00 & -2.76 & 18.04 & -0.152848 \\
+ & Copper & HG & 197 & -0.03 & 31.12 & 8.92 & 24.94 & 0.357753 \\
+ & Gold & GC & 229 & -0.03 & 7.84 & 0.28 & 19.10 & 0.014436 \\
+ & Palladium & PA & 69 & 0.19 & 77.29 & 6.98 & 30.56 & 0.228549 \\
+ & Platinum & PL & 78 & -0.17 & 17.95 & 5.66 & 21.53 & 0.262967 \\
+ & Silver & SI & 198 & 0.12 & 99.51 & 1.56 & 30.79 & 0.050702 \\
+ \bottomrule
+\caption{Summary statistics of commodity futures for every individual commodity in the sample replication}
+\end{tabular}
+\end{adjustbox}
+\caption{Summary statistics of commodity futures for every individual commodity in the sample replication}
+\label{table:commodity_Original}
+
+
+
+\begin{adjustbox}{width=\textwidth}
+2009 to 2024: \begin{tabular}{lllrrrrrr}
+\toprule
+ &  & Symbol & N & Basis & Freq. of bw. & Excess returns & Volatility & Sharpe ratio \\
+Sector & Commodity &  &  &  &  &  &  &  \\
+\midrule
+\multirow[c]{12}{*}{Agriculture} & Canola & WC & 224 & -0.04 & 13.19 & 5.09 & 19.02 & 0.267642 \\
+ & Cocoa & CC & 200 & -0.02 & 20.33 & 6.77 & 25.31 & 0.267439 \\
+ & Coffee & KC & 251 & -0.00 & 36.81 & -0.01 & 28.87 & -0.000244 \\
+ & Corn & C- & 244 & 0.01 & 69.23 & 1.55 & 25.40 & 0.061014 \\
+ & Cotton & CT & 251 & -0.01 & 40.11 & 11.86 & 26.81 & 0.442586 \\
+ & Lumber & LB & 137 & -0.01 & 29.07 & 14.99 & 42.75 & 0.350625 \\
+ & Oats & O- & 222 & inf & 10.44 & 7.03 & 29.50 & 0.238121 \\
+ & Orange juice & JO & 251 & -0.04 & 7.14 & 12.46 & 29.36 & 0.424325 \\
+ & Rough rice & RR & 142 & 0.01 & 60.99 & -0.45 & 18.31 & -0.024777 \\
+ & Soybean meal & SM & 251 & -0.04 & 13.19 & 11.13 & 24.55 & 0.453524 \\
+ & Soybeans & S- & 251 & -0.02 & 17.58 & 7.29 & 21.26 & 0.342872 \\
+ & Wheat & W- & 244 & 0.06 & 94.51 & -6.38 & 29.52 & -0.216168 \\
+\multirow[c]{4}{*}{Energy} & Crude Oil & CL & 251 & 0.05 & 98.90 & 2.85 & 37.08 & 0.076968 \\
+ & Gasoline & RB & 251 & -0.04 & 11.54 & 14.58 & 33.09 & 0.440526 \\
+ & Heating Oil & HO & 251 & -0.04 & 6.59 & 8.38 & 30.05 & 0.278788 \\
+ & Natural gas & NG & 251 & 0.12 & 92.31 & -19.62 & 44.43 & -0.441535 \\
+\multirow[c]{3}{*}{Livestock} & Feeder cattle & FC & 155 & 0.05 & 84.62 & 2.47 & 15.86 & 0.155769 \\
+ & Lean hogs & LH & 236 & 0.07 & 87.36 & -3.35 & 25.74 & -0.129966 \\
+ & Live cattle & LC & 175 & 0.01 & 44.51 & 2.83 & 12.97 & 0.218076 \\
+\multirow[c]{6}{*}{Metals} & Aluminium & AL & 252 & 0.00 & 76.37 & 0.85 & 19.70 & 0.043288 \\
+ & Copper & HG & 246 & 0.01 & 88.46 & 7.19 & 21.71 & 0.331093 \\
+ & Gold & GC & 238 & 0.00 & 45.60 & 4.69 & 15.49 & 0.302772 \\
+ & Palladium & PA & 102 & 0.10 & 94.51 & 14.01 & 29.10 & 0.481459 \\
+ & Platinum & PL & 102 & -0.14 & 4.95 & 0.19 & 20.85 & 0.009116 \\
+ & Silver & SI & 216 & 0.02 & 86.81 & 6.53 & 30.84 & 0.211790 \\
+\bottomrule
+\caption{Summary statistics of commodity futures for every individual commodity in the sample replication}
+\label{table:commodity_Replication}
+\end{tabular}
+\end{adjustbox}
+
+
+\section{Summary Statistics }
+
+
+
+
+\section{Conclusion}
+
+This study aimed to replicate the seminal findings of Yang (2013), focusing on the influence of commodity basis spreads on asset pricing. Although we were able to confirm the overarching theories presented in Yang’s original work, our replication process faced challenges attributed to discrepancies in data sources. Specifically, the data in Yang's original paper was extracted from the Commodity Research Bureau (CRB), which has since ceased to exist and was acquired by Barchart. The dissolution of the CRB meant that we could not access the original data source to perfectly match the contract IDs to the commodities.
+
+Initially, the project suggested the use of data from WARDS services; however, this proved impractical as there was no feasible method to align contract IDs with their corresponding commodities in WARDS datasets. Consequently, we resorted to Bloomberg as our primary data source. The reliance on Bloomberg for data extraction introduced certain inconsistencies when compared to Yang’s original table. Despite these discrepancies, our results do broadly align with the theoretical implications of the original study, reinforcing the pivotal role of financial intermediaries in asset pricing through commodity basis spreads.
+
+These data source challenges underscore the complexities involved in replicating empirical financial research, especially when original data sources are no longer available or have been subsumed by other entities. Our commitment to transparency and methodological rigor remains steadfast, as evidenced by the documentation and analysis provided in our GitHub repository. Future research in this area should take these data source variations into account, as they may affect the replication and interpretation of past studies in commodity futures markets.
+
+
+
+
+
+\section{Task List}
+
+\item{Aditya:}
+\item{Kaleem:}
+\item{Raafay:}
+\item{Yasmine:}
+
+
+
+
+
+
+
+
+
+
+
+% \clearpage
+
+\begin{thebibliography}{99}
+\bibliographystyle{plainnat}
+
+\bibitem{ref1}
+He A, et al. “Intermediary Asset Pricing: New Evidence from Many Asset Classes.” Journal of Financial Economics, North-Holland, 12 Aug. 2017, www.sciencedirect.com/science/article/abs/pii/S0304405X1730212X. 
+
+\bibitem{ref2}
+Yang F, et al. “Investment Shocks and the Commodity Basis Spread.” Journal of Financial Economics, North-Holland, 3 May 2013, www.sciencedirect.com/science/article/abs/pii/S0304405X13001360. 
+
+\bibitem{ref3}
+Gorton B, et al. “The Fundamentals of Commodity Futures Returns.” OUP Academic, Oxford University Press, 8 Aug. 2012, academic.oup.com/rof/article/17/1/35/1581689. 
+
+
+
+\end{thebibliography}
+% \clearpage
+% \hline
+
+\end{document}
