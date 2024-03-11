@@ -151,32 +151,10 @@ def task_additional_analysis():
         "clean":True
         }
 
-#def task_compile_latex_docs():
-#    """Compiling the latex report"""
-#
-#    file_dep = [
-#        REPORTS_DIR / "project_pdf.tex",
-#    ]
-#    
-#    file_output = [
-#        "project_pdf.pdf",
-#    ]
-#    target = [REPORTS_DIR / file for file in file_output]
-#
-#    return {
-#        "actions": [
-#            "latexmk -xelatex -cd ./reports/project_pdf.tex",  # Compile
-#            "latexmk -xelatex -c -cd ./reports/project_pdf.tex",  # Clean
-#        ],
-#        "targets": target,
-#        "file_dep": file_dep,
-#        "clean": True,
-#    }
-
 def task_latex_to_pdf():
     return {
-        'actions': ['python src/latex_to_document.py reports/report_simple_example_copy.tex'],
-        'file_dep': ['src/latex_to_document.py', 'reports/report_simple_example_copy.tex'],
-        'targets': ['reports/report_simple_example_copy.pdf'],
+        'actions': ['python src/latex_to_document.py reports/Final_Report.tex'],
+        'file_dep': ['src/latex_to_document.py', 'reports/Final_Report.tex'],
+        'targets': ['reports/Final_Report.pdf'],
         'clean': True,
     }
